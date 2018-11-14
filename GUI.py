@@ -28,8 +28,7 @@ class Application(tk.Tk):
         self.page_array = {}
         
         # Classes array
-        data =[MainPage,SignupPage,OrdinaryPage,GuestPage,SuperPage]
-        #DocumentPage]
+        data =[MainPage,SignupPage,OrdinaryPage,GuestPage,SuperPage,DocumentPage]
         
         for page in data:
             page_name = page.__name__
@@ -188,7 +187,7 @@ class SuperPage(tk.Frame):
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
         label1 = tk.Label(self, text="ShareWithME")
         label1.config(font=("Courier", 35, 'bold'))
-        label2 = Label(self, text="Welcome to you Home Page, Super\n\nHere are your Documents:")
+        label2 = Label(self, text="Welcome to your Home Page, Super\n\nHere are your Documents:")
         label2.config(font=("Courier", 20))
        
         #DROP DOWN
@@ -199,7 +198,7 @@ class SuperPage(tk.Frame):
        
        
         #BUTTONS
-        button1 = tk.Button(self, text="Open",command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self, text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
         # NEEDED TO PULL DOCUMENT FROM BACKEND)
        
         button2=tk.Button(self,text="Delete")#command=lambda:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
@@ -212,9 +211,8 @@ class SuperPage(tk.Frame):
 
 
         button6=tk.Button(self, text="Update Membership")#,command=lambda:TO BE IMPLEMENTED BY BACKEND
-        button7=tk.Button(self, text="Lock/Unlock")#,command=lambda:TO BE IMPLEMENTED BY BACKEND
-        button8=tk.Button(self, text="Taboo Words")#,command=lambdaTO BE IMPLEMENTED BY BACKEND
-        button9=tk.Button(self, text="Process Complaints")#,command=lambda:TO BE IMPLEMENTED BY BACKEND
+        button7=tk.Button(self, text="Taboo Words")#,command=lambdaTO BE IMPLEMENTED BY BACKEND
+        button8=tk.Button(self, text="Process Complaints")#,command=lambda:TO BE IMPLEMENTED BY BACKEND
        
         #PLACING THE LABELS
         n = 150
@@ -236,10 +234,10 @@ class SuperPage(tk.Frame):
         button4.place(x=n+300,y=m*10)
         button5.place(x=n+380,y=m-20)
 
-        button6.place(x=n+300,y=m*6)
-        button7.place(x=n+300,y=m*7)
-        button8.place(x=n+300,y=m*8)
-        button9.place(x=n+300,y=m*9)
+        button6.place(x=n+300,y=m*7)
+        button7.place(x=n+300,y=m*8)
+        button8.place(x=n+300,y=m*9)
+
 
 
 
@@ -260,18 +258,18 @@ class OrdinaryPage(tk.Frame):
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
         label1 = tk.Label(self, text="ShareWithME")
         label1.config(font=("Courier", 35, 'bold'))
-        label2 = Label(self, text="Welcome to you Home Page\n\nHere are your Documents:")
+        label2 = Label(self, text="Welcome to your Home Page\n\nHere are your Documents:")
         label2.config(font=("Courier", 20))
         
         #DROP DOWN
-        ##REFRENE FOR DROP DOWN
+        ##REFRENcE FOR DROP DOWN
         '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
         #doc1, doc 2 need to be replaced by the bakedn data
         dropDown1 = OptionMenu(self, variable, *OPTIONS)
         
         
         #BUTTONS
-        button1 = tk.Button(self, text="Open",command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self, text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
                             # NEEDED TO PULL DOCUMENT FROM BACKEND)
         
         button2=tk.Button(self,text="Delete")#command=lambda:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
@@ -322,7 +320,7 @@ class GuestPage(tk.Frame):
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
         label1 = tk.Label(self, text="ShareWithME")
         label1.config(font=("Courier", 35, 'bold'))
-        label2 = Label(self, text="Welcome to the Home Page, Guest\nHere are the Documents\nSelect a document you want to view:")
+        label2 = Label(self, text="Welcome to the Home Page, Guest\nSelect a document you want to view:")
         label2.config(font=("Courier", 20))
                    
         #DROP DOWN
@@ -333,7 +331,7 @@ class GuestPage(tk.Frame):
                    
                    
         #BUTTONS
-        button1 = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self,text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
         # NEEDED TO PULL THE SELECTED DOCUMENT FROM BACKEND)
         button2 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
                    
@@ -354,7 +352,20 @@ class GuestPage(tk.Frame):
         button1.place(x=n-50,y=m*7)
         button2.place(x=n+50, y=m*7)
 
+class DocumentPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
 
+        T = Text(self,height=35, width=55,highlightbackground="black", highlightcolor="black", highlightthickness=1)
+        
+        T.insert(CURRENT,"HellO")
+        
+        n = 150
+        m = 50
+        T.place(x=n-120,y=m-20)
+        button1 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
+        button1.place(x=n+300, y=m*6.5)
 
 def main():
     #print("Phonebook App\n")
