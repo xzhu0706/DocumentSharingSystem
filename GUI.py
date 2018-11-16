@@ -10,8 +10,10 @@ app_name = "Document Sharing System"
 
 
 class Application(tk.Tk):
+
 # Constructor
     def __init__(self):
+        
         tk.Tk.__init__(self)
         self.title(app_name)
         self.geometry(window_dimensions)
@@ -25,6 +27,7 @@ class Application(tk.Tk):
         container.pack(side="top", fill="both", expand= True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
+        
         
         self.page_array = {}
         
@@ -177,7 +180,9 @@ class SignupPage(tk.Frame):
         button4.place(x=450,y=350)
 
 class SuperPage(tk.Frame):
+    
     def __init__(self, parent, controller):
+        
         tk.Frame.__init__(self, parent)
         self.controller = controller
         
@@ -187,7 +192,6 @@ class SuperPage(tk.Frame):
                    "DOCUMENT 2",
                    "DOCUMENT 3"
                    ] #etc
-            
         variable = StringVar(self)
         variable.set("PLEASE SELECT A DOCUMENT")
                    ##LABELS
@@ -205,7 +209,7 @@ class SuperPage(tk.Frame):
        
        
         #BUTTONS
-        button1 = tk.Button(self, text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self, text="Open",command=lambda:controller.show_frame("DocumentPage"))
         # NEEDED TO PULL DOCUMENT FROM BACKEND)
        
         button2=tk.Button(self,text="Delete")#command=lambda:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
@@ -249,7 +253,9 @@ class SuperPage(tk.Frame):
 
 
 class OrdinaryPage(tk.Frame):
+    
     def __init__(self, parent, controller):
+        
         tk.Frame.__init__(self, parent)
         self.controller = controller
         
@@ -259,7 +265,6 @@ class OrdinaryPage(tk.Frame):
                    "DOCUMENT 2",
                    "DOCUMENT 3"
                    ] #etc
-                   
         variable = StringVar(self)
         variable.set("PLEASE SELECT A DOCUMENT")
         ##LABELS
@@ -277,7 +282,7 @@ class OrdinaryPage(tk.Frame):
         
         
         #BUTTONS
-        button1 = tk.Button(self, text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self, text="Open",command=lambda:controller.show_frame("DocumentPage"))
                             # NEEDED TO PULL DOCUMENT FROM BACKEND)
         
         button2=tk.Button(self,text="Delete")#command=lambda:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
@@ -309,10 +314,12 @@ class OrdinaryPage(tk.Frame):
         button6.place(x=n+380,y=m-20)
 
 class GuestPage(tk.Frame):
+    
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        
+
+        self.ID="guest"
         #Options for drop down just an example
         #need all documents for guest
         OPTIONS = [
@@ -340,8 +347,9 @@ class GuestPage(tk.Frame):
                    
                    
         #BUTTONS
-        button1 = tk.Button(self,text="Open")#,command=lambda:controller.show_frame("DocumentPage"))
+        button1 = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentPage"))
         # NEEDED TO PULL THE SELECTED DOCUMENT FROM BACKEND)
+
         button2 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
                    
                    
@@ -365,17 +373,43 @@ class DocumentPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-       
-
-        T = Text(self,height=35, width=55,highlightbackground="black", highlightcolor="black", highlightthickness=1)
-        
-        T.insert(CURRENT,"HellO")
+        label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
+        label1 = tk.Label(self, text="ShareWithME")
+        label1.config(font=("Courier", 35, 'bold'))
+        T = Text(self,height=32, width=60,highlightbackground="black", highlightcolor="black", highlightthickness=1)
+        #need to save everythin in it lets after 10 sec
+        #T.insert(CURRENT,"HellO")
         
         n = 150
         m = 50
-        T.place(x=n-120,y=m-20)
-        button1 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
-        button1.place(x=n+300, y=m*6.5)
+        
+        button1 = tk.Button(self,text="Save")#,command=lambda:)
+        button2 = tk.Button(self,text="Lock")#,command=lambda:)
+        
+        button3 = tk.Button(self,text="Add Contributors" )#,command=lambda:)
+        button4=tk.Button(self, text="Log Out",fg="blue",command=lambda:controller.show_frame("MainPage"))
+        
+        #or now neeed to change the implementation it should go to super or ordinary or guest
+        button5 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
+        
+        button6 = tk.Button(self,text="Complain")#,command=lambda:)
+        button7 = tk.Button(self,text="Taboo Words")#,command=lambda:)
+        
+    
+
+
+        label_type.pack(side=BOTTOM)
+        label1.pack(side=TOP,ipady=20)
+        T.place(x=n-120,y=m+20)
+        
+        button1.place(x=n+325, y=m*3)
+        button2.place(x=n+325, y=m*4)
+        button3.place(x=n+325, y=m*5)
+        button4.place(x=n+380,y=m-20)
+        button5.place(x=n+325, y=m*6)
+        button6.place(x=n+325, y=m*7)
+        button7.place(x=n+325, y=m*8)
+
 
 def main():
     #print("Phonebook App\n")
