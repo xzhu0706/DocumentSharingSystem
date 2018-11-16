@@ -8,6 +8,7 @@ from PIL import ImageTk, Image
 window_dimensions = "600x600"
 app_name = "Document Sharing System"
 
+
 class Application(tk.Tk):
 # Constructor
     def __init__(self):
@@ -59,6 +60,7 @@ class MainPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         
+        
         # Labels
         label_type = tk.Label(self, text="® FourOfUS 2018", fg = "gray",font=controller.footer_font)
         
@@ -71,6 +73,10 @@ class MainPage(tk.Frame):
         #ENTRIES
         entry1 = Entry(self)
         entry2 = Entry(self,show='*')
+        #filename = PhotoImage(file = "/Users/Binod/Desktop/college/Fall2018/SoftwareEngineering/DocumentSharingSystem/backgroundImage.png")
+        #background_label = Label(self, image=filename)
+        #background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        
         
         
     
@@ -174,6 +180,7 @@ class SuperPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        
         #Options for drop down just an example need to be implemented
         OPTIONS = [
                    "DOCUMENT 1",
@@ -245,6 +252,7 @@ class OrdinaryPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        
         #Options for drop down just an example need to be implemented
         OPTIONS = [
                    "DOCUMENT 1",
@@ -304,6 +312,7 @@ class GuestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        
         #Options for drop down just an example
         #need all documents for guest
         OPTIONS = [
@@ -356,6 +365,7 @@ class DocumentPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+       
 
         T = Text(self,height=35, width=55,highlightbackground="black", highlightcolor="black", highlightthickness=1)
         
