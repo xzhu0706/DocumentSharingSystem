@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import font
 from tkinter import messagebox
 from PIL import ImageTk, Image
-class GuestPage(tk.Frame):
+class Guest(tk.Frame):
     
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

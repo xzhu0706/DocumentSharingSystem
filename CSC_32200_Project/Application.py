@@ -5,9 +5,9 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 from MainPage import *
 from SignupPage import *
-from SuperPage import *
-from OrdinaryPage import *
-from GuestPage import *
+from SuperUser import *
+from OrdinaryUser import *
+from Guest import *
 from DocumentPage import *
 
 
@@ -39,7 +39,7 @@ class Application(tk.Tk):
         self.page_array = {}
         
         # Classes array
-        data =[MainPage,SignupPage,OrdinaryPage,GuestPage,SuperPage,DocumentPage]
+        data =[MainPage,SignupPage,OrdinaryUser,Guest,SuperUser,DocumentPage]
         
         for page in data:
             page_name = page.__name__
@@ -56,14 +56,25 @@ class Application(tk.Tk):
         frame = self.page_array[page_name]
         frame.tkraise()
         
-    def check_show_frame(self, entry1,entry2,page_name1,page_name2 ):
-        if(entry1.get()=="super" and entry2.get()=="super"):
-            frame = self.page_array[page_name1]
-            frame.tkraise()
-        else:
-            frame = self.page_array[page_name2]
-            frame.tkraise()
-
+    def check_user(self, name, password):
+        user_info_file = open("user_info", "r") #"r": read only
+        #the while loop reads users' info and matches usernames and passwords
+        while True:
+            user_id_string = user_info_file.readline()
+            if user_id_string == '':
+                break
+            user_id = int(user_id_string)
+            user_name = user_info_file.readline() #read user_name
+            user_name = user_name.replace("\n", "")
+            user_password = user_info_file.readline() #read user_password
+            user_password = user_password.replace("\n", "")
+            user_type = user_info_file.readline() #read user_type
+            user_type = user_type.replace("\n", "")
+            user_info_file.readline() #skip *
+            
+            if (name == user_name and password == user_password):
+                frame = self.page_array[user_type]
+                frame.tkraise()
 
 
 def main():

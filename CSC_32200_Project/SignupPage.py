@@ -10,7 +10,7 @@ class SignupPage(tk.Frame):
         
         def sign_up():
             '''This is the function called when "sign up" is clicked'''
-            sign_up_file = open("user_info.txt", "r+") #"r+": read and write from the begining
+            sign_up_file = open("user_info", "r+") #"r+": read and write from the begining
 
             #the while loop reads and updates the users' info until it's the last user
             while True:
@@ -27,7 +27,7 @@ class SignupPage(tk.Frame):
             user_id = user_id + 1         #assign a new id to the user
             user_name = entry_name.get()      #get the user_name
             user_password = entry_password.get()  #get the user_password
-            user_type = "ou"              #get the user_type
+            user_type = "OrdinaryUser"              #get the user_type
 
             #writes all the info into the file
             print(user_id, file=sign_up_file)
@@ -36,6 +36,13 @@ class SignupPage(tk.Frame):
             print(user_type, file=sign_up_file)
             print('*', file=sign_up_file)
             sign_up_file.close()
+
+            #clear the entries
+            entry_name.delete(0, END)
+            entry_email.delete(0, END)
+            entry_phone.delete(0, END)
+            entry_password.delete(0, END)
+            
             messagebox.showinfo("Information","Account Created, Please Login!!") #show messagebox after signup
             controller.show_frame("MainPage")   #go back to home page
             #end of sign_up()
