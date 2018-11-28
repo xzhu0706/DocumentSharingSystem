@@ -1,8 +1,9 @@
+############################################################################
+#Name:Application.py
+#Description: This program opens up a empty window and shows the MainPage
+############################################################################
 import tkinter as tk
 from tkinter import *
-from tkinter import font
-from tkinter import messagebox
-from PIL import ImageTk, Image
 from MainPage import *
 from SignupPage import *
 from SuperUser import *
@@ -18,7 +19,7 @@ app_name = "Document Sharing System"
 
 class Application(tk.Tk):
 
-# Constructor
+    #Constructor
     def __init__(self):
         
         tk.Tk.__init__(self)
@@ -35,11 +36,9 @@ class Application(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         
-        
-        self.page_array = {}
-        
         # Classes array
-        data =[MainPage,SignupPage,OrdinaryUser,Guest,SuperUser,DocumentPage]
+        self.page_array = {}
+        data = [MainPage,SignupPage,OrdinaryUser,Guest,SuperUser,DocumentPage]
         
         for page in data:
             page_name = page.__name__
@@ -52,39 +51,15 @@ class Application(tk.Tk):
         
         self.show_frame("MainPage")
         
-    def show_frame(self, page_name, ):
+    def show_frame(self, page_name):
         frame = self.page_array[page_name]
         frame.tkraise()
         
-    def check_user(self, name, password):
-        user_info_file = open("user_info", "r") #"r": read only
-        #the while loop reads users' info and matches usernames and passwords
-        while True:
-            user_id_string = user_info_file.readline()
-            if user_id_string == '':
-                break
-            user_id = int(user_id_string)
-            user_name = user_info_file.readline() #read user_name
-            user_name = user_name.replace("\n", "")
-            user_password = user_info_file.readline() #read user_password
-            user_password = user_password.replace("\n", "")
-            user_type = user_info_file.readline() #read user_type
-            user_type = user_type.replace("\n", "")
-            user_info_file.readline() #skip *
-            
-            if (name == user_name and password == user_password):
-                frame = self.page_array[user_type]
-                frame.tkraise()
-
-
+#main()
 def main():
-    #print("Phonebook App\n")
     app = Application()
     app.mainloop()
 
-#print("\n- End of Phonebook\n")
-
 if __name__ == "__main__":
     main()
-
-
+    

@@ -1,8 +1,5 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import font
-from tkinter import messagebox
-from PIL import ImageTk, Image
 
 class SignupPage(tk.Frame):
     
@@ -43,7 +40,7 @@ class SignupPage(tk.Frame):
             entry_phone.delete(0, END)
             entry_password.delete(0, END)
             
-            messagebox.showinfo("Information","Account Created, Please Login!!") #show messagebox after signup
+            tk.messagebox.showinfo("Information","Account Created, Please Login!!") #show messagebox after signup
             controller.show_frame("MainPage")   #go back to home page
             #end of sign_up()
 

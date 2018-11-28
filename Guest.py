@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import font
-from tkinter import messagebox
-from PIL import ImageTk, Image
+
 class Guest(tk.Frame):
     
     def __init__(self, parent, controller):
