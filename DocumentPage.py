@@ -4,7 +4,7 @@ from tkinter import font
 from tkinter import messagebox
 from PIL import ImageTk, Image
 class DocumentPage(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, user, doc):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)

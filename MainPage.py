@@ -9,9 +9,9 @@ import pandas as pd
 
 class MainPage(tk.Frame):
 
-    userid = ''
-    username = ''
-    usertype = ''
+    # userid = ''
+    # username = ''
+    # usertype = ''
 
     #Initializer
     def __init__(self, parent, controller):
@@ -43,10 +43,12 @@ class MainPage(tk.Frame):
                 tk.messagebox.showerror("Error", "Wrong username!")
             else:
                 if password_input == user_info.get('password').values[0]:
-                    self.username = username_input
-                    self.userid = user_info.get('id').values[0]
-                    self.usertype = user_info.get('usertype').values[0]
-                    frame = controller.page_array[self.usertype]
+                    # If password match, set user info into the system by calling the controller method
+                    username = username_input
+                    userid = user_info.get('id').values[0]
+                    usertype = user_info.get('usertype').values[0]
+                    controller.set_user(username, userid, usertype)
+                    frame = controller.page_array[usertype]
                     frame.tkraise()
                 else:
                     tk.messagebox.showerror("Error", "Wrong password!")
