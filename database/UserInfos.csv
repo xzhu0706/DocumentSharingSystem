@@ -1,0 +1,3 @@
+id,usertype,username,password,technical_interest
+1,SuperUser,super,super,AI
+2,OrdinaryUser,chow,chow,ML
