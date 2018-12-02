@@ -21,10 +21,10 @@ class Application(tk.Tk):
 
     # Constructor
     def __init__(self):
-        self.username = ''
-        self.userid = ''
-        self.usertype = ''
-        self.docid = ''
+        self.__username = 'Guest'
+        self.__userid = '0'
+        self.__usertype = 'Guest'
+        self.__docid = ''
         
         tk.Tk.__init__(self)
         self.title(app_name)
@@ -54,43 +54,57 @@ class Application(tk.Tk):
             # put all of the pages in the same location; the one on the TOP of the stacking order --> visible.
             current_page.grid(row=0, column=0, sticky="nsew")
         
-        self.show_frame("MainPage")
+        #self.show_frame("MainPage")
+        self.create_doc_page()
+        self.show_frame("DocumentPage")
         
     def show_frame(self, page_name):
         frame = self.page_array[page_name]
         frame.tkraise()
 
     def set_user(self, username, userid, usertype):
-        self.username = username
-        self.userid = userid
-        self.usertype = usertype
-        print('user is logged in as: ' + self.username)
+        self.__username = username
+        self.__userid = userid
+        self.__usertype = usertype
+        print('user is logged in as: ' + username)
         # create page for user
         if usertype == 'SuperUser':
             self.create_su_page()
         elif usertype == 'OrdinaryUser':
             self.create_ou_page()
 
+    def get_username(self):
+        return self.__username
+
+    def get_userid(self):
+        return self.__userid
+
+    def get_usertype(self):
+        return self.__usertype
+
+    def get_docid(self):
+        return self.__docid
+
     def create_su_page(self):
         page_name = SuperUser.__name__
-        su_page = SuperUser(parent=self.container, controller=self, userid=self.userid, username=self.username)
+        su_page = SuperUser(parent=self.container, controller=self)
         self.page_array[page_name] = su_page
         su_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for user id {}'.format(su_page, self.userid))
+        print('created {} for user id {}'.format(su_page, self.__userid))
 
     def create_ou_page(self):
         page_name = OrdinaryUser.__name__
-        ou_page = OrdinaryUser(parent=self.container, controller=self, userid=self.userid, username=self.username)
+        ou_page = OrdinaryUser(parent=self.container, controller=self)
         self.page_array[page_name] = ou_page
         ou_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for user id {}'.format(ou_page, self.userid))
+        print('created {} for user id {}'.format(ou_page, self.__userid))
 
     def create_doc_page(self):
         page_name = DocumentPage.__name__
-        doc_page = DocumentPage(parent=self.container, controller=self, userid=self.userid, doc=self.docid)
+        doc_page = DocumentPage(parent=self.container, controller=self)
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for document id {}'.format(doc_page, self.docid))
+        print('created {} for document id {}'.format(doc_page, self.__docid))
         
 #main()
 def main():
@@ -99,4 +113,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+

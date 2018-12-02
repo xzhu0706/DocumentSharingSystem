@@ -9,11 +9,7 @@ import pandas as pd
 
 class MainPage(tk.Frame):
 
-    # userid = ''
-    # username = ''
-    # usertype = ''
-
-    #Initializer
+    # Constructor
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -52,39 +48,6 @@ class MainPage(tk.Frame):
                     frame.tkraise()
                 else:
                     tk.messagebox.showerror("Error", "Wrong password!")
-
-
-        # def check_user(name, password):
-        #
-        #     #Opens "user_info" which stores all the username and password info
-        #     user_info_file = open("user_info", "r") #"r": read only
-        #
-        #     #The while loop reads users' info in turn and matches usernames and passwords
-        #     while True:
-        #         user_id_string = user_info_file.readline()      #read user id as a string
-        #
-        #         #Stop reading the file when there's no more information
-        #         if user_id_string == '':
-        #             break
-        #
-        #         user_id = int(user_id_string)                   #convert string into int
-        #         user_name = user_info_file.readline()           #read user_name
-        #         user_name = user_name.replace("\n", "")         #get rid of "\n" in user_name
-        #         user_password = user_info_file.readline()       #read user_password
-        #         user_password = user_password.replace("\n", "") #get rid of "\n" in user_password
-        #         user_type = user_info_file.readline()           #read user_type
-        #         user_type = user_type.replace("\n", "")         #get rid of "\n" in user_type
-        #         user_info_file.readline()                       #skip *
-        #
-        #         #If both username and password match, go to corresponding page
-        #         if (name == user_name and password == user_password):
-        #             frame = controller.page_array[user_type]
-        #             frame.tkraise()
-        #             return
-        #
-        #     #If no match found, show the error message
-        #     tk.messagebox.showinfo("Login error","The username or password "\
-        #                                 "you entered is incorrect")
 
         #############
         #    GUI    #

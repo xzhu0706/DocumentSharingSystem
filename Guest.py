@@ -13,9 +13,7 @@ class Guest(tk.Frame):
         OPTIONS = [
                    "DOCUMENT 1",
                    "DOCUMENT 2",
-                   "DOCUMENT 3",
-                   "DOCUMENT 4",
-                   "DOCUMENT 5"
+                   "DOCUMENT 3"
                    ] #etc
             
         variable = StringVar(self)
@@ -24,7 +22,7 @@ class Guest(tk.Frame):
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
         label1 = tk.Label(self, text="ShareWithME")
         label1.config(font=("Courier", 35, 'bold'))
-        label2 = Label(self, text="Welcome to the Home Page, Guest\nSelect a document you want to view:")
+        label2 = Label(self, text="Welcome to your Home Page, {}!\nSelect a document:".format(controller.get_username()))
         label2.config(font=("Courier", 20))
                    
         #DROP DOWN
@@ -35,10 +33,12 @@ class Guest(tk.Frame):
                    
                    
         #BUTTONS
-        button1 = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentPage"))
+        open_doc_button = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentPage"))
         # NEEDED TO PULL THE SELECTED DOCUMENT FROM BACKEND)
 
-        button2 = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
+        back_button = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
+
+        suggest_taboo_button = tk.Button(self,text="Suggest Taboo Words")#, command=lambda:)
                    
                    
                   
@@ -54,5 +54,8 @@ class Guest(tk.Frame):
         dropDown1.place(x=n-50,y=m*6)
                    
         #PLACING BUTTONS
-        button1.place(x=n-50,y=m*7)
-        button2.place(x=n+50, y=m*7)
+        open_doc_button.place(x=n-50,y=m*7)
+        back_button.place(x=n+50, y=m*7)
+        suggest_taboo_button.place(x=n+300, y=m*10.5)
+
+    #def open_doc(self, ):

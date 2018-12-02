@@ -6,20 +6,19 @@ from OrdinaryUser import *
 
 class SuperUser(OrdinaryUser):
 
-    def __init__(self, parent, controller, userid, username):
+    def __init__(self, parent, controller):
 
-        super(SuperUser, self).__init__(parent, controller, userid, username)
+        super(SuperUser, self).__init__(parent, controller)
 
-        button6 = tk.Button(self, text="Update Membership")  # ,command=lambda:TO BE IMPLEMENTED BY BACKEND
-        button7 = tk.Button(self, text="Taboo Words")  # ,command=lambdaTO BE IMPLEMENTED BY BACKEND
-        ## Need more buttons: process complaints...
+        update_membership_button = tk.Button(self, text="Manage Membership")  # ,command=lambda:TO BE IMPLEMENTED BY BACKEND, can update or remove user
+        taboo_words_button = tk.Button(self, text="Taboo Words")  # ,command=lambdaTO BE IMPLEMENTED BY BACKEND
 
         # PLACING THE LABELS
         n = 150
         m = 50
 
-        button6.place(x=n + 300, y=m * 7)
-        button7.place(x=n + 300, y=m * 8)
+        update_membership_button.place(x=n + 300, y=m * 8.5)
+        taboo_words_button.place(x=n + 300, y=m * 9)
 
 # class SuperUser(tk.Frame):
 #
