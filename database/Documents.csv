@@ -1,1 +1,3 @@
-﻿doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,content
+doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,content,locker
+1,1,,public,1,1,3,Hello World,Welcome\nto\nthe\nworld,
+2,2,,,0.0,,0,,,

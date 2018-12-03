@@ -4,6 +4,7 @@ from tkinter import font
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from Guest import *
+import DocumentsManager
 
 
 class OrdinaryUser(Guest):
@@ -28,7 +29,7 @@ class OrdinaryUser(Guest):
         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
 
         entry_search_filed = Entry(self)
-        search_button = tk.Button(self, text="Search")#, command=lambda: ) need to implement search function
+        search_button = tk.Button(self, text="Search", command=lambda: self.show_warning() if controller.is_warned else print('Need function here')) #need to implement search function
 
 
         # PLACING THE LABELS
@@ -43,6 +44,16 @@ class OrdinaryUser(Guest):
 
         entry_search_filed.place(x=n-50, y=m*5)
         search_button.place(x=n+140,y=m*5+2.5)
+
+        if controller.is_warned:
+            self.show_warning()
+
+    def show_warning(self):
+        tk.messagebox.showwarning("Warning", "You are on the warning list because your \
+                                    document named \"{}\" contains taboo words! \
+                                    Please fix it before you conduct any other activity.".format(
+            self.controller.bad_doc_title))
+
 
 # class OrdinaryUser(tk.Frame):
 #

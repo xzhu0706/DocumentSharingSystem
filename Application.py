@@ -9,11 +9,12 @@ from SignupPage import *
 from SuperUser import *
 from OrdinaryUser import *
 from Guest import *
-from DocumentPage import *
+from DocumentOwnerPage import *
+import DocumentsManager
 
 
 # Global Variables
-window_dimensions = "600x600"
+window_dimensions = "620x600"
 app_name = "Document Sharing System"
 
 
@@ -25,6 +26,9 @@ class Application(tk.Tk):
         self.__userid = '0'
         self.__usertype = 'Guest'
         self.__docid = ''
+        self.is_warned = False
+        self.bad_docid = ''
+        self.bad_doc_title = ''
         
         tk.Tk.__init__(self)
         self.title(app_name)
@@ -54,9 +58,19 @@ class Application(tk.Tk):
             # put all of the pages in the same location; the one on the TOP of the stacking order --> visible.
             current_page.grid(row=0, column=0, sticky="nsew")
         
-        #self.show_frame("MainPage")
-        self.create_doc_page()
-        self.show_frame("DocumentPage")
+        self.show_frame("MainPage")
+
+        ## uncomment if you want to see the doc_owner page
+        # self.create_doc_owner_page()
+        # self.show_frame("DocumentOwnerPage")
+
+        ## uncomment if you want to see the doc_editor page
+        # self.create_doc_editor_page()
+        # self.show_frame("DocumentEditorPage")
+
+        ## uncomment if you want to see the doc_viewer page
+        # self.create_doc_viewer_page()
+        # self.show_frame("DocumentViewerPage")
         
     def show_frame(self, page_name):
         frame = self.page_array[page_name]
@@ -71,6 +85,7 @@ class Application(tk.Tk):
         if usertype == 'SuperUser':
             self.create_su_page()
         elif usertype == 'OrdinaryUser':
+            self.is_on_warning_list()
             self.create_ou_page()
 
     def get_username(self):
@@ -99,12 +114,36 @@ class Application(tk.Tk):
         ou_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for user id {}'.format(ou_page, self.__userid))
 
-    def create_doc_page(self):
-        page_name = DocumentPage.__name__
-        doc_page = DocumentPage(parent=self.container, controller=self)
+    def create_doc_owner_page(self):
+        page_name = DocumentOwnerPage.__name__
+        doc_page = DocumentOwnerPage(parent=self.container, controller=self)
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for document id {}'.format(doc_page, self.__docid))
+
+    def create_doc_viewer_page(self):
+        page_name = DocumentViewerPage.__name__
+        doc_page = DocumentViewerPage(parent=self.container, controller=self)
+        self.page_array[page_name] = doc_page
+        doc_page.grid(row=0, column=0, sticky="nsew")
+        print('created {} for document id {}'.format(doc_page, self.__docid))
+
+    def create_doc_editor_page(self):
+        page_name = DocumentEditorPage.__name__
+        doc_page = DocumentEditorPage(parent=self.container, controller=self)
+        self.page_array[page_name] = doc_page
+        doc_page.grid(row=0, column=0, sticky="nsew")
+        print('created {} for document id {}'.format(doc_page, self.__docid))
+
+    def is_on_warning_list(self):
+        warning_list = pd.read_csv("database/WarningList.csv", delimiter=',')
+        user_on_list = warning_list[warning_list['user_id'] == self.__userid]
+        if not user_on_list.empty:
+            self.is_warned = True
+            self.bad_docid = user_on_list.get('doc_id').values[0]
+            bad_doc = DocumentsManager.get_doc_info(self.bad_docid)
+            self.bad_doc_title = bad_doc.get('title').values[0]
+
         
 #main()
 def main():
