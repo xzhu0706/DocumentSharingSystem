@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import *
+import DocumentsManager
+import DocumentViewerPage
 
 class Guest(tk.Frame):
     
@@ -16,24 +17,24 @@ class Guest(tk.Frame):
                    "DOCUMENT 3"
                    ] #etc
             
-        variable = StringVar(self)
+        variable = tk.StringVar(self)
         variable.set("PLEASE SELECT A DOCUMENT")
                    ##LABELS
         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
         label1 = tk.Label(self, text="ShareWithME")
         label1.config(font=("Courier", 35, 'bold'))
-        label2 = Label(self, text="Welcome to your Home Page, {}!\nSelect a document:".format(controller.get_username()))
+        label2 = tk.Label(self, text="Welcome to your Home Page, {}!\nSelect a document:".format(controller.get_username()))
         label2.config(font=("Courier", 20))
                    
         #DROP DOWN
         ##REFRENE FOR DROP DOWN
         '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
         #doc1, doc 2 need to be replaced by the bakend data
-        dropDown1 = OptionMenu(self, variable, *OPTIONS)
+        dropDown1 = tk.OptionMenu(self, variable, *OPTIONS)
                    
                    
         #BUTTONS
-        open_doc_button = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentPage"))
+        open_doc_button = tk.Button(self,text="Open",command=lambda:controller.show_frame("DocumentViewerPage")) ## NEED TO CHANGE
         # NEEDED TO PULL THE SELECTED DOCUMENT FROM BACKEND)
 
         back_button = tk.Button(self,text="Back",command=lambda:controller.show_frame("MainPage"))
@@ -45,8 +46,8 @@ class Guest(tk.Frame):
         #PLACING THE LABELS
         n = 150
         m = 50
-        label_type.pack(side=BOTTOM)
-        label1.pack(side=TOP,ipady=20)
+        label_type.pack(side=tk.BOTTOM)
+        label1.pack(side=tk.TOP,ipady=20)
         label2.place(x=n-50,y=m*3)
                    
                    

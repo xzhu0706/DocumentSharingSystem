@@ -1,7 +1,3 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import font
-from tkinter import messagebox
 from PIL import ImageTk, Image
 from DocumentViewerPage import *
 import speech_recognition as sr
@@ -33,17 +29,14 @@ class DocumentEditorPage(DocumentViewerPage):
 
     def speech_recognition(self):
         r = sr.Recognizer()
-
         print('start speech')
-
         with sr.Microphone() as source:
             audio = r.listen(source)
         try:
             # print(r.recognize_google(audio))
             content = r.recognize_google(audio).split()
             for word in content:
-                self.content.insert(CURRENT, word + '\n')
-                print(word)
+                self.content.insert(tk.CURRENT, word + '\n')
         except Exception as e:
-            print("Could not request results from Google \
+            tk.messagebox.showerror("Error", "Could not request results from Google \
                 Speech Recognition service; {0}".format(e))

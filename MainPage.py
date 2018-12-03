@@ -43,9 +43,9 @@ class MainPage(tk.Frame):
                     username = username_input
                     userid = user_info.get('id').values[0]
                     usertype = user_info.get('usertype').values[0]
-                    controller.set_user(username, userid, usertype)
-                    frame = controller.page_array[usertype]
-                    frame.tkraise()
+                    controller.log_in(username, userid, usertype)
+                    # frame = controller.page_array[usertype]
+                    # frame.tkraise()
                 else:
                     tk.messagebox.showerror("Error", "Wrong password!")
 

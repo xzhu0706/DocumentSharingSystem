@@ -1,8 +1,3 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import font
-from tkinter import messagebox
-from PIL import ImageTk, Image
 from DocumentEditorPage import *
 
 class DocumentOwnerPage(DocumentEditorPage):
@@ -19,13 +14,13 @@ class DocumentOwnerPage(DocumentEditorPage):
             "Restricted",
             "Public"
         ]
-        variable = StringVar(self)
+        variable = tk.StringVar(self)
         variable.set("Scopes")
 
         # DROP DOWN
         ##REFRENE FOR DROP DOWN
         '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
-        scopes_drop_down = OptionMenu(self, variable, *OPTIONS)
+        scopes_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
 
         n = 150
         m = 50

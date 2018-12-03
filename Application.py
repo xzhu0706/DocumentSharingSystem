@@ -2,8 +2,6 @@
 #Name:Application.py
 #Description: This program opens up a empty window and shows the MainPage
 ############################################################################
-import tkinter as tk
-from tkinter import *
 from MainPage import *
 from SignupPage import *
 from SuperUser import *
@@ -25,9 +23,9 @@ class Application(tk.Tk):
         self.__username = 'Guest'
         self.__userid = '0'
         self.__usertype = 'Guest'
-        self.__docid = ''
+        self.opened_docid = '0'
         self.is_warned = False
-        self.bad_docid = ''
+        self.bad_docid = '0'
         self.bad_doc_title = ''
         
         tk.Tk.__init__(self)
@@ -76,7 +74,7 @@ class Application(tk.Tk):
         frame = self.page_array[page_name]
         frame.tkraise()
 
-    def set_user(self, username, userid, usertype):
+    def log_in(self, username, userid, usertype):
         self.__username = username
         self.__userid = userid
         self.__usertype = usertype
@@ -85,8 +83,19 @@ class Application(tk.Tk):
         if usertype == 'SuperUser':
             self.create_su_page()
         elif usertype == 'OrdinaryUser':
-            self.is_on_warning_list()
-            self.create_ou_page()
+            if self.is_on_warning_list():
+                self.is_on_warning_list()
+                self.show_warning()
+                return
+            else:
+                self.create_ou_page()
+        self.show_frame(usertype)
+
+    def show_warning(self):
+        tk.messagebox.showwarning("Warning", "You are on the warning list because your \
+                                    document named \"{}\" contains taboo words! Please fix it before you conduct any other activity.".format(
+            self.bad_doc_title))
+
 
     def get_username(self):
         return self.__username
@@ -96,9 +105,6 @@ class Application(tk.Tk):
 
     def get_usertype(self):
         return self.__usertype
-
-    def get_docid(self):
-        return self.__docid
 
     def create_su_page(self):
         page_name = SuperUser.__name__
@@ -119,30 +125,35 @@ class Application(tk.Tk):
         doc_page = DocumentOwnerPage(parent=self.container, controller=self)
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for document id {}'.format(doc_page, self.__docid))
+        print('created {} for document id {}'.format(doc_page, self.opened_docid))
 
     def create_doc_viewer_page(self):
         page_name = DocumentViewerPage.__name__
         doc_page = DocumentViewerPage(parent=self.container, controller=self)
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for document id {}'.format(doc_page, self.__docid))
+        print('created {} for document id {}'.format(doc_page, self.opened_docid))
 
     def create_doc_editor_page(self):
         page_name = DocumentEditorPage.__name__
         doc_page = DocumentEditorPage(parent=self.container, controller=self)
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
-        print('created {} for document id {}'.format(doc_page, self.__docid))
+        print('created {} for document id {}'.format(doc_page, self.opened_docid))
 
     def is_on_warning_list(self):
-        warning_list = pd.read_csv("database/WarningList.csv", delimiter=',')
+        ## assuming no more than one doc contains taboo words per user
+        warning_list = pd.read_csv("database/WarningList.csv")
         user_on_list = warning_list[warning_list['user_id'] == self.__userid]
         if not user_on_list.empty:
             self.is_warned = True
             self.bad_docid = user_on_list.get('doc_id').values[0]
             bad_doc = DocumentsManager.get_doc_info(self.bad_docid)
             self.bad_doc_title = bad_doc.get('title').values[0]
+            self.opened_docid = self.bad_docid
+            self.create_doc_editor_page()        ## show the bad doc editor page
+            self.show_frame("DocumentEditorPage")
+            return True
 
         
 #main()
