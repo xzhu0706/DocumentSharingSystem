@@ -27,7 +27,7 @@ class Application(tk.Tk):
         self.is_warned = False
         self.bad_docid = '0'
         self.bad_doc_title = ''
-        
+
         tk.Tk.__init__(self)
         self.title(app_name)
         self.geometry(window_dimensions)
@@ -41,7 +41,7 @@ class Application(tk.Tk):
         self.container.pack(side="top", fill="both", expand= True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
-        
+
         # Classes array
         self.page_array = {}
         data = [MainPage, SignupPage, Guest]
@@ -55,7 +55,7 @@ class Application(tk.Tk):
 
             # put all of the pages in the same location; the one on the TOP of the stacking order --> visible.
             current_page.grid(row=0, column=0, sticky="nsew")
-        
+
         self.show_frame("MainPage")
 
         ## uncomment if you want to see the doc_owner page
@@ -69,7 +69,7 @@ class Application(tk.Tk):
         ## uncomment if you want to see the doc_viewer page
         # self.create_doc_viewer_page()
         # self.show_frame("DocumentViewerPage")
-        
+
     def show_frame(self, page_name):
         frame = self.page_array[page_name]
         frame.tkraise()
@@ -155,7 +155,7 @@ class Application(tk.Tk):
             self.show_frame("DocumentEditorPage")
             return True
 
-        
+
 #main()
 def main():
     app = Application()
@@ -163,4 +163,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
