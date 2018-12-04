@@ -1,5 +1,5 @@
 doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,content
 1,1,Public,,False,,0,hello world,
-2,1,Public,,False,,0,My Logical Paper,
+
 
 
