@@ -18,7 +18,7 @@ class DocumentOwnerPage(DocumentEditorPage):
         variable.set("Scopes")
 
         # DROP DOWN
-        ##REFRENE FOR DROP DOWN
+        # REFRENE FOR DROP DOWN
         '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
         scopes_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
 
@@ -27,7 +27,6 @@ class DocumentOwnerPage(DocumentEditorPage):
 
         manage_contributor_button.place(x=n+325, y=m*6)
         scopes_drop_down.place(x=n+325, y=m+50)
-
 
 
 # class DocumentPage(tk.Frame):

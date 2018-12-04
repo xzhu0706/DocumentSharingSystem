@@ -1,7 +1,6 @@
 import tkinter as tk
-from PIL import ImageTk, Image
+#from PIL import ImageTk, Image
 import DocumentsManager
-
 
 class DocumentViewerPage(tk.Frame):
 

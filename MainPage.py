@@ -54,7 +54,7 @@ class MainPage(tk.Frame):
         #############
         
         #LABLES
-        label_type = tk.Label(self, text="? FourOfUS 2018", fg = "gray",font=controller.footer_font)
+        label_type = tk.Label(self, text="® FourOfUS 2018", fg = "gray",font=controller.footer_font)
         label = tk.Label(self, text="ShareWithMe")
         label.config(font=("Courier", 45, 'bold'))
         label_name = Label(self, text="Username")

@@ -12,19 +12,22 @@ class OrdinaryUser(Guest):
         self.userid = controller.get_userid()
 
         delete_button = tk.Button(self,
-                            text="Delete")  # command=lambda: #TODO:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
+                            text="Delete")  # command=lambda:
+        # TODO:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
 
-        create_doc_button = tk.Button(self, fg="red", text="Create A\nNew Document ",
+        create_doc_button = tk.Button(self, text="Create A \n New Document ",fg="red",
                             command=lambda: self.create_new_doc())
-
+        # create_doc_button.config(height=10, width=10);
         process_complaints_button = tk.Button(self,
-                            text="Process Complaints")  # command=lambda:#TODO:NEED TO SHOW THE COMPLAINTS THE USER RECEIVED
+                            text="Process Complaints")  # command=lambda:
+        # TODO:NEED TO SHOW THE COMPLAINTS THE USER RECEIVED
         manage_invite_button = tk.Button(self,
                             text="Manage Invitations")  # command=lambda:NEED TO CHECK FROM BACKEND IF ANYONE INVITED
         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
 
         entry_search_filed = tk.Entry(self)
-        search_button = tk.Button(self, text="Search")#, command=lambda: ) #TODO:need to implement search function
+        search_button = tk.Button(self, text="Search")  # command=lambda
+        # TODO:need to implement search function
 
         # PLACING THE LABELS
         n = 150
@@ -37,17 +40,17 @@ class OrdinaryUser(Guest):
         logout_button.place(x=n + 380, y=m - 20)
 
         entry_search_filed.place(x=n-50, y=m*5)
-        search_button.place(x=n+140,y=m*5+2.5)
+        search_button.place(x=n+140, y=m*5+2.5)
 
     def create_new_doc(self):
-        box = self.dialog_box()  ## create the dialog box to ask for title and scope for creating doc
-        self.wait_window(box)  ## wait until dialog is closed (info is submitted)
+        box = self.dialog_box()  # create the dialog box to ask for title and scope for creating doc
+        self.wait_window(box)  # wait until dialog is closed (info is submitted)
         title = box.init_info['title']
         scope = box.init_info['scope']
-        new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, title) ## get new_doc_id
-        self.controller.opened_docid = new_doc_id  ## set currently opened doc_id
-        self.controller.create_doc_owner_page()    ## create new doc_owner_page
-        self.controller.show_frame("DocumentOwnerPage") ## display page
+        new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, title) # get new_doc_id
+        self.controller.opened_docid = new_doc_id  # set currently opened doc_id
+        self.controller.create_doc_owner_page()    # create new doc_owner_page
+        self.controller.show_frame("DocumentOwnerPage")  # display page
 
     class dialog_box(tk.Toplevel):
 

@@ -91,5 +91,3 @@ class SignupPage(tk.Frame):
             df.to_csv(pending_applications_db, index=False, header=False)
         tk.messagebox.showinfo("Information", "Registration is successful, please wait for approval.")
         self.controller.show_frame("MainPage")
-
-            
