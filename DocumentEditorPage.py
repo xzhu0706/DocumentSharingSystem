@@ -46,6 +46,7 @@ class DocumentEditorPage(DocumentViewerPage):
 
 
     def updateCheck(self):
+        # might need to check if it is locked or not
         # reading the Documents.csv file
 
         document_db = pd.read_csv("database/Documents.csv", delimiter=',')
@@ -60,10 +61,6 @@ class DocumentEditorPage(DocumentViewerPage):
         index_of_doc_id=doc_id_list.index(doc_id)
         # getting content of the opened document
         this_document= list(doc_content_list[index_of_doc_id].split())
-        row=DocumentsManager.get_doc_info(doc_id)
-        if (row['is_locked']==False):
-            print("suces")
-
         # reading the TabooWords.csv file
         tabbo_db=pd.read_csv("database/TabooWords.csv", delimiter=',')
         # making a list of all taboo words
