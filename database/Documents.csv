@@ -21,7 +21,6 @@ doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,conte
 20,1,Scopes,,False,,0,,
 21,1,Scopes,,False,,0,daassa,
 22,1,Scopes,,False,,0,ffs,
-
 23,1,Private,,False,,0,prajwal dai,
 24,1,,,False,,0,,
 25,1,Scopes,,False,,0,Try1,
@@ -42,3 +41,6 @@ doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,conte
 40,1,Scopes,,False,,0,hey there,
 41,1,Scopes,,False,,0,hey there,
 42,1,Scopes,,False,,0,acd cdsaf,
+43,2,,Restricted,False,,0,hihi,
+44,2,,Shared,False,,0,hey bitch shit yo,
+45,2,,Scopes,False,,0,shit bitch ya,
