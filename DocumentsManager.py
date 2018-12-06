@@ -66,7 +66,7 @@ def create_new_doc(userid, scope, title):
     new_doc_id = len(docs_db) + 1
 
     # Add new doc to db (doc_id and owner_id)
-    data = [[new_doc_id, userid, scope, '', False, '', 0, title, '']]
+    data = [[new_doc_id, userid, '', scope, False, '', 0, title, '']]
     df = pd.DataFrame(data, columns=['doc_id', 'owner_id', 'current_seq_id',
                                      'scope', 'is_locked', 'locker_id',
                                      'views_count', 'title', 'content'])
