@@ -46,6 +46,7 @@ class DocumentEditorPage(DocumentViewerPage):
 
 
     def updateCheck(self):
+        # might need to check if it is locked or not
         # reading the Documents.csv file
 
         document_db = pd.read_csv("database/Documents.csv", delimiter=',')

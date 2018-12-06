@@ -5,6 +5,7 @@ class DocumentOwnerPage(DocumentEditorPage):
     def __init__(self, parent, controller):
 
         super(DocumentOwnerPage, self).__init__(parent, controller)
+        
 
         manage_contributor_button = tk.Button(self, text="Manage Contributors")#,command=lambda:)
 
