@@ -46,7 +46,7 @@ class DocumentEditorPage(DocumentViewerPage):
 
 
     def updateCheck(self):
-        # might need to check if it is locked or not
+        # might need to check if it
         # reading the Documents.csv file
 
         document_db = pd.read_csv("database/Documents.csv", delimiter=',')
@@ -68,13 +68,13 @@ class DocumentEditorPage(DocumentViewerPage):
         # empty list to store taoo words found
         tabboo_used=[]
 
-        # checking if any taboo worsd in the content
+        # checking if any taboo words in the content
         for i in tabboo_list:
             if i in this_document:
                 # add the word to the found taboo word list
                 tabboo_used.append(i)
                 # if any taboo words found
         if(len(tabboo_used)>0):
-            tk.messagebox.showerror("Error","Update unsucessful\nFollowing taboo words used \n{}".format(tabboo_used))
+            tk.messagebox.showerror("Error","Update unsucessful\nFollowing taboo words used: \n{}".format(tabboo_used))
         else:
             tk.messagebox.showinfo("Information","Successfully updated")

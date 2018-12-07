@@ -25,8 +25,11 @@ class OrdinaryUser(Guest):
                             text="Manage Invitations")  # command=lambda:NEED TO CHECK FROM BACKEND IF ANYONE INVITED
         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
 
-        entry_search_filed = tk.Entry(self)
-        search_button = tk.Button(self, text="Search")  # command=lambda
+        search_field = tk.Entry(self)
+
+
+        user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get()))
+        document_search_button = tk.Button(self, text="Search Document")  # command=lambda
         # TODO:need to implement search function
 
         # PLACING THE LABELS
@@ -39,8 +42,12 @@ class OrdinaryUser(Guest):
         manage_invite_button.place(x=n + 300, y=m * 10)
         logout_button.place(x=n + 380, y=m - 20)
 
-        entry_search_filed.place(x=n-50, y=m*5)
-        search_button.place(x=n+140, y=m*5+2.5)
+
+        search_field.place(x=n-50, y=m*4.75)
+
+        user_search_button.place(x=n+140, y=m*4.5)
+        document_search_button.place(x=n+140, y=m*5)
+
 
     def create_new_doc(self):
         box = self.dialog_box()  # create the dialog box to ask for title and scope for creating doc
@@ -51,6 +58,9 @@ class OrdinaryUser(Guest):
         self.controller.opened_docid = new_doc_id  # set currently opened doc_id
         self.controller.create_doc_owner_page()    # create new doc_owner_page
         self.controller.show_frame("DocumentOwnerPage")  # display page
+    def search_user(self,result):
+        user_box=self.display_user_box(result)
+
 
     class dialog_box(tk.Toplevel):
 
@@ -90,6 +100,62 @@ class OrdinaryUser(Guest):
             self.init_info['title'] = title
             self.init_info['scope'] = scope
             self.destroy()
+    # this class helps is invoked to display search results of user in a document page
+    class display_user_box(tk.Toplevel):
+
+        def __init__(self,search_result):
+            # this is passed as keyword in the text field of the search bar
+            self.search_result=search_result
+            tk.Toplevel.__init__(self)
+            #reading the file for userinfo database
+            user_db=pd.read_csv("database/UserInfos.csv")
+
+            # list that stores all the user names
+            user_list=list(user_db['username'])
+            # list that stores all the tehcnical interest for all user in the respective index of the user
+            technical_list=list(user_db['technical_interest'])
+            #empty list to store the index of usernames matched
+            index_list=[]
+            # check if any usernames matches the searched input
+            if self.search_result in user_list:
+                # make a list box if the words matches
+                username_list=tk.Listbox(self,height=10)#,width=10)
+                # setting the title for the listbox
+                username_list.insert(tk.END,"Users")
+                # lopping through the names of usernames
+                for names in user_list:
+                    # check the names that match the username
+                    if self.search_result in names:
+                        username_list.insert(tk.END,names)
+                        # kepping track of the indexes added to add the corresponding technical interests
+                        index_list.append(user_list.index(names))
+                # make a list box for technical interest
+                technicalinterest_list=tk.Listbox(self,height=10)
+                # setting the title for the listbox
+                technicalinterest_list.insert(tk.END,"Technical Interest")
+                # looping through the indexes added in the username_list
+                for index in index_list:
+                    # add that specific index of the technical_list
+                    technicalinterest_list.insert(tk.END,technical_list[index])
+
+                # cancel button to go back to the main page
+                cancel_button=tk.Button(self,text="Cancel",command=self.destroy)#,command=lambda:mylistbox.get(ACTIVE))
+                # setting up the layout of the dialog box
+                username_list.grid(row=0,column=0)
+                technicalinterest_list.grid(row=0,column=1)
+                cancel_button.grid(row=1,column=0)
+            # this is the case when there is no match which simply destroys the box
+            # then prints an error messagebox in the screen
+            else:
+                self.destroy()
+                tk.messagebox.showerror("Error","No Such User found")
+
+
+
+
+
+
+
 
 
 # class OrdinaryUser(tk.Frame):
@@ -159,4 +225,3 @@ class OrdinaryUser(Guest):
 #         button4.place(x=n+300,y=m*9.5)
 #         button5.place(x=n+300,y=m*10)
 #         button6.place(x=n+380,y=m-20)
-
