@@ -61,7 +61,6 @@ class Guest(tk.Frame):
     def taboo_words_suggested(self):
         box = self.taboo_box()  # create the dialog box to ask for title and scope for creating doc
         self.wait_window(box)
-        print("Information updated in the database")
     class taboo_box(tk.Toplevel):
         def __init__(self):
             tk.Toplevel.__init__(self)
@@ -84,6 +83,7 @@ class Guest(tk.Frame):
                 with open('database/TabooWords.csv', 'a') as taboo_db:
                     df.to_csv(taboo_db, index=False, header=False)
                 new_word_id=new_word_id+1
+            print("Information updated in the database")
             self.destroy()
 
 

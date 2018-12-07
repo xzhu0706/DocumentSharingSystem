@@ -25,7 +25,7 @@ class DocumentViewerPage(tk.Frame):
         self.title = tk.Text(self, height=1, width=30, highlightbackground="black", highlightcolor="black",
                           highlightthickness=1,
                           font=("Times New Roman", 18))
-        self.title.insert(tk.INSERT,self.getTitle().upper())
+        self.title.insert(tk.INSERT,self.getTitle())
         #self.title=tk.Label(self,text=self.getTitle())
         self.content = tk.Text(self, height=25, width=60, highlightbackground="black", highlightcolor="black",
                             highlightthickness=1, )
