@@ -1,46 +1,86 @@
-doc_id,owner_id,current_seq_id,scope,is_locked,locker_id,views_count,title,content
-1,1,Public,,False,,0,hello world,
-2,1,Public,,False,,0,My Logical Paper,
-3,1,Scopes,,False,,0,,
-4,1,Scopes,,False,,0,,
-5,1,Scopes,,False,,0,ads,
-6,1,Scopes,,False,,0,T,
-7,1,,,False,,0,,
-8,1,Scopes,,False,,0,abc,
-9,1,Scopes,,False,,0,adv,
-10,1,Scopes,,False,,0,hey,
-11,1,Scopes,,False,,0,a,
-12,1,Scopes,,False,,0,hey,
-13,1,,,False,,0,,
-14,1,,,False,,0,,
-15,1,Scopes,,False,,0,hello,
-16,1,Scopes,,False,,0,hello,
-17,1,Scopes,,False,,0,heye,
-18,1,Scopes,,False,,0,,
-19,1,Scopes,,False,,0,,
-20,1,Scopes,,False,,0,,
-21,1,Scopes,,False,,0,daassa,
-22,1,Scopes,,False,,0,ffs,
-23,1,Private,,False,,0,prajwal dai,
-24,1,,,False,,0,,
-25,1,Scopes,,False,,0,Try1,
-26,1,Scopes,,False,,0,the mighhty sword,
-27,1,Scopes,,False,,0,the migh run,
-28,1,Scopes,,False,,0,hey there,
-29,1,Scopes,,False,,0,my shit,
-30,1,,,False,,0,,
-31,1,Scopes,,False,,0,my shit,
-32,1,Scopes,,False,,0,hello world,
-33,1,Scopes,,False,,0,shit bitch,
-34,1,Scopes,,False,,0,hey there,
-35,1,Scopes,,False,,0,hey there,
-36,1,Scopes,,False,,0,hey there,
-37,1,Scopes,,False,,0,hey there,
-38,1,Scopes,,False,,0,hey there,
-39,1,Scopes,,False,,0,het dfgd,
-40,1,Scopes,,False,,0,hey there,
-41,1,Scopes,,False,,0,hey there,
-42,1,Scopes,,False,,0,acd cdsaf,
-43,2,,Restricted,False,,0,hihi,
-44,2,,Shared,False,,0,hey bitch shit yo,
-45,2,,Scopes,False,,0,shit bitch ya,
+doc_id,owner_id,current_seq_id,scope,is_locked,views_count,modified_by,modified_at,title,content
+1,2,-,Private,False,0,yay,,,
+2,2,-,Public,False,0,hello world,,,
+3,2,-,Private,False,0,yes,,,
+4,2,-,Private,False,0,ya,,,
+5,2,5-1-2-201812071722,Private,False,0,hy,hello\nhello\nhey,,
+6,2,-,Private,False,0,hi,,,
+7,2,-,Private,True,0,yra,,,
+8,1,-,Private,False,0,hel,,,
+9,2,-,Private,True,0,t,,,
+10,2,-,Private,True,0,my doc,,,
+11,2,-,Private,True,0,haha,"yaya
+yeye
+baba",,
+12,1,-,Shared,False,0,la la la, ,,
+13,1,-,Private,False,0,jia, ,,
+14,2,-,Private,True,0,yes,"helo
+ye
+yeaa
+yes
+yaas
+bye",,
+15,2,-,Private,False,0,2,2018-12-07 21:45:45,vohiyo, 
+16,1,-,Shared,True,0,1,2018-12-07 22:04:43,ohiyo, 
+17,1,17-1,Private,True,0,1,2018-12-07T22:07:53,hey yo,"bala
+ba
+ba
+ba
+I'm
+loving
+it"
+18,2,-,Private,False,0,2,2018-12-07 22:14:14,yay, 
+19,2,19-1,Private,True,0,2,2018-12-07T22:14:57,bye,"bye
+world"
+20,2,-,Private,False,0,2,2018-12-07 22:18:47,sdf, 
+21,2,-,Private,True,0,2,2018-12-07 22:42:51,heilo, 
+22,2,-,Private,True,0,2,2018-12-07 22:43:45,ya, 
+23,2,-,Private,True,0,2,2018-12-07 23:06:14,bye, 
+24,2,-,Private,True,0,2,2018-12-07 23:08:37,yas, 
+25,2,25-1,Private,True,0,2,2018-12-07T23:10:13,j,"yeas
+yo"
+26,2,26-1,Shared,False,0,2,2018-12-07T23:47:45,yay,"jala
+naya
+saronara"
+27,2,27-1,Restricted,True,0,2,2018-12-07T23:56:52,hala,"jana
+yaya"
+28,2,28-3,Private,False,0,2,2018-12-08T00:02:25,sa,"fsd
+fds
+fds
+sdf
+jia
+jie"
+29,2,29-1,Private,True,0,2,2018-12-08T00:59:11,UNK ba yea fuck,"hello
+world
+bitch
+shit
+fuck
+yea
+bah"
+30,2,30-1,Private,True,0,2,2018-12-08T01:09:03,UNK ya bah f,"bitch
+fuck
+ya
+hello
+bab
+yi"
+31,2,31-1,Private,True,0,2,2018-12-08T01:11:18,da fuck,"yea
+hi
+da
+fuck
+bitch
+shit
+meow"
+32,2,32-1,Private,False,0,2,2018-12-08T01:12:41,UNK fuck,"fuck
+meow
+hi
+bitch
+yo"
+33,2,33-1,Private,True,0,2,2018-12-08T01:13:53,hi,"hello
+world
+bitch"
+34,2,-,Private,True,0,2,2018-12-08 01:14:28,shit, 
+35,2,-,Private,True,0,2,2018-12-08 01:17:17,yas, 
+36,2,36-1,Private,True,0,2,2018-12-08T01:18:21,yas,"fuck
+bitch
+shit
+ya"

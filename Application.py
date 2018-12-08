@@ -21,9 +21,9 @@ class Application(tk.Tk):
     # Constructor
     def __init__(self):
         self.__username = 'Guest'
-        self.__userid = '0'
+        self.__userid = 0
         self.__usertype = 'Guest'
-        self.opened_docid = '0'
+        self.opened_docid = 0
         self.is_warned = False
         self.bad_docid = '0'
         self.bad_doc_title = ''
@@ -66,7 +66,7 @@ class Application(tk.Tk):
         # self.create_doc_editor_page()
         # self.show_frame("DocumentEditorPage")
 
-        ## uncomment if you want to see the doc_viewer page
+        # uncomment if you want to see the doc_viewer page
         # self.create_doc_viewer_page()
         # self.show_frame("DocumentViewerPage")
 
@@ -95,7 +95,6 @@ class Application(tk.Tk):
         tk.messagebox.showwarning("Warning", "You are on the warning list because your \
                                     document named \"{}\" contains taboo words! Please fix it before you conduct any other activity.".format(
             self.bad_doc_title))
-
 
     def get_username(self):
         return self.__username
@@ -143,17 +142,30 @@ class Application(tk.Tk):
 
     def is_on_warning_list(self):
         ## assuming no more than one doc contains taboo words per user
-        warning_list = pd.read_csv("database/WarningList.csv")
-        user_on_list = warning_list[warning_list['user_id'] == self.__userid]
-        if not user_on_list.empty:
+        warning_list = pd.read_csv("database/WarningList.csv", index_col=0)
+        docs_db = pd.read_csv("database/Documents.csv", index_col=0)
+        try:
+            docid = warning_list.loc[self.__userid]['doc_id']
             self.is_warned = True
-            self.bad_docid = user_on_list.get('doc_id').values[0]
-            bad_doc = DocumentsManager.get_doc_info(self.bad_docid)
-            self.bad_doc_title = bad_doc.get('title').values[0]
+            self.bad_docid = docid
             self.opened_docid = self.bad_docid
-            self.create_doc_editor_page()        ## show the bad doc editor page
+            self.bad_doc_title = docs_db.loc[docid]['title']
+            self.create_doc_editor_page()
             self.show_frame("DocumentEditorPage")
             return True
+        except KeyError:
+            return False
+
+        # user_on_list = warning_list[warning_list['user_id'] == self.__userid]
+        # if not user_on_list.empty:
+        #     self.is_warned = True
+        #     self.bad_docid = user_on_list.get('doc_id').values[0]
+        #     bad_doc = DocumentsManager.get_doc_info(self.bad_docid)
+        #     self.bad_doc_title = bad_doc.get('title').values[0]
+        #     self.opened_docid = self.bad_docid
+        #     self.create_doc_editor_page()        ## show the bad doc editor page
+        #     self.show_frame("DocumentEditorPage")
+        #     return True
 
 
 #main()

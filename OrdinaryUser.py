@@ -53,18 +53,21 @@ class OrdinaryUser(Guest):
         self.wait_window(box)  # wait until dialog is closed (info is submitted)
         title = box.init_info['title']
         scope = box.init_info['scope']
-        new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, title) # get new_doc_id
-        self.controller.opened_docid = new_doc_id  # set currently opened doc_id
-        self.controller.create_doc_owner_page()    # create new doc_owner_page
-        self.controller.show_frame("DocumentOwnerPage")  # display page
-    def search_user(self,result):
+        if title and scope:
+            new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, title) # get new_doc_id
+            self.controller.opened_docid = new_doc_id  # set currently opened doc_id
+            self.controller.create_doc_owner_page()    # create new doc_owner_page
+            self.controller.show_frame("DocumentOwnerPage")  # display page
+
+    def search_user(self, result):
         user_box=self.display_user_box(result)
 
-    def search_document(self,result):
+    def search_document(self, result):
         user_box=self.display_document_box(result)
 
 
     class dialog_box(tk.Toplevel):
+        '''This class is a dialog box that asks user for title and scope of doc upon creating new doc'''
 
         def __init__(self):
             tk.Toplevel.__init__(self)
@@ -85,7 +88,7 @@ class OrdinaryUser(Guest):
                 "Public"
             ]
             variable = tk.StringVar(self)
-            variable.set("Scopes")
+            variable.set("Private")
             scopes_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
             submit_button = tk.Button(self, fg="red", text="Submit", command=lambda : self.on_submit(
                 title_entry.get(), variable.get()))
@@ -102,6 +105,7 @@ class OrdinaryUser(Guest):
             self.init_info['title'] = title
             self.init_info['scope'] = scope
             self.destroy()
+
     # this class helps is invoked to display search results of user in a document page
     class display_user_box(tk.Toplevel):
 
