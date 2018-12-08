@@ -89,6 +89,6 @@ class DocumentEditorPage(DocumentViewerPage):
             # add user to warning list
             DocumentsManager.add_warning(self.userid, self.docid)
             tk.messagebox.showwarning("", "Updated sucessfully. Following taboo words were used: {}.\nPlease fix them ASAP!".format(taboo_used))
-        else:
+        elif self.doc_info['current_seq_id'] != '-':
             tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
 

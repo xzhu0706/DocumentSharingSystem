@@ -15,7 +15,7 @@ class DocumentViewerPage(tk.Frame):
 
         self.doc_info = DocumentsManager.get_doc_info(self.docid)
         self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
-        self.owner_name = AccountsManager.get_username(int(self.doc_info['owner_id']))
+        self.owner_name = AccountsManager.get_username(self.doc_info['owner_id'])
 
         tk.Frame.__init__(self, parent)
 
@@ -78,7 +78,7 @@ class DocumentViewerPage(tk.Frame):
         lock_status_label.place(x=n + 70, y=m * 10 + 20)
         last_modified_label.place(x=n + 70, y=m * 10 + 40)
         scope_label.place(x=n - 40, y=m + 70)
-        owner_label.place(x=n - 70, y=m + 10)
+        owner_label.place(x=n + 160, y=m + 70)
 
         #display doc info
         self.display_content()
@@ -86,26 +86,27 @@ class DocumentViewerPage(tk.Frame):
 
     def display_content(self):
         # Can use this function to refresh content
-        doc_info = DocumentsManager.get_doc_info(self.docid)
-        doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
+        self.doc_info = DocumentsManager.get_doc_info(self.docid)
+        self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
         # delete old content and insert new content
         self.title.delete(1.0, tk.END)
-        self.title.insert(tk.INSERT, self.filter_taboo_words(doc_info['title'], ' '))
-        if doc_info['current_seq_id'] != '-':
+        print(self.doc_info['title'])
+        self.title.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['title'], ' '))
+        if self.doc_info['current_seq_id'] != '-':
             self.content.delete(1.0, tk.END)
-            self.content.insert(tk.INSERT, self.filter_taboo_words(doc_info['content'], '\n'))
+            self.content.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['content'], '\n'))
         # update lock status
-        if doc_info['is_locked'] == False:
+        if self.doc_info['is_locked'] == False:
             self.lock_status_var.set("Document is unlocked")
         else:
             locker = DocumentsManager.get_locker(self.docid)
             self.lock_status_var.set("Document is currently locked by {}".format(locker['name']))
         # update scope
-        self.scope_var.set("This is a {} document".format(doc_info['scope']))
+        self.scope_var.set("This is a {} document".format(self.doc_info['scope']))
         # update last modifier and time
         self.last_modified_var.set(
-            "Last modified by {} at {}".format(AccountsManager.get_username(int(doc_info['modified_by'])),
-                                               DocumentsManager.time_to_str(doc_info['modified_at']))
+            "Last modified by {} at {}".format(AccountsManager.get_username(int(self.doc_info['modified_by'])),
+                                               DocumentsManager.time_to_str(self.doc_info['modified_at']))
         )
         ## TODO: display doc old versions
 

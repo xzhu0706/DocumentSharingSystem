@@ -29,7 +29,8 @@ def get_technical_interest(userid):
 
 def add_user(userinfo):
     '''This function adds a new user to db given the userinfo dictionary'''
-    id = len(pd.read_csv(path_to_user_infos_db, index_col=0)) + 1
+    user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)
+    id = user_infos_db.tail(1).index.values[0] + 1
     df = pd.DataFrame({
         'id': id,
         'usertype': [userinfo['usertype']],
@@ -51,10 +52,16 @@ def main():
     ## Testing code here
     userid = 2
     user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)
-    # a = user_infos_db.loc[user_infos_db['id'] == userid]
-    # print(a['password'])
-    # print(user_infos_db.loc[userid]['username'])
-    print(get_username(userid))
+
+    a = user_infos_db.tail(1).index.values[0]
+    print(a)
+
+    # add_user({
+    #     'usertype': 'OrdinaryUser',
+    #     'username': 'alpaca',
+    #     'password': 'llama',
+    #     'technical_interest': 'software engineering'
+    # })
 
 
 

@@ -114,8 +114,7 @@ def unlock_doc(userid, docid):
 def create_new_doc(userid, scope, title):
     '''This function add new row to documents database and return new_doc_id'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    new_docid = len(docs_db) + 1
-
+    new_docid = docs_db.tail(1).index.values[0] + 1
     # Add new doc to db (doc_id and owner_id)
     # initial seq_id is just a dash '-' (meaning no content in it)
     # initial content is just a blank space
@@ -209,7 +208,7 @@ def main():
     ## Testing code here
     docid = 25
     # docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    # print(get_doc_info(docid))
+    print(get_doc_info(docid)['title'])
 
 
 
