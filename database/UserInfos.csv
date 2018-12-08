@@ -2,3 +2,4 @@ id,usertype,username,password,technical_interest
 1,SuperUser,super,super,AI
 2,OrdinaryUser,chow,chow,ML
 3,OrdinaryUser,chau,chau,ios
+4,OrdinaryUser,alpaca,llama,software engineering

@@ -41,8 +41,6 @@ class DocumentViewerPage(tk.Frame):
                           font=("Times New Roman", 18))
         self.content = tk.Text(self, height=25, width=60, highlightbackground="black", highlightcolor="black",
                             highlightthickness=1, )
-        # need to save everythin in it lets after 10 sec
-        # content.insert(CURRENT,"HellO")
 
         OPTIONS = [
             "Version 3",
@@ -59,8 +57,8 @@ class DocumentViewerPage(tk.Frame):
         versions_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
 
         complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
-        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else controller.show_frame(
-            controller.get_usertype()))  # jump back to user page
+        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())#controller.show_frame(
+         #   controller.get_usertype()))  # jump back to user page
 
         n = 150
         m = 50
@@ -90,7 +88,6 @@ class DocumentViewerPage(tk.Frame):
         self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
         # delete old content and insert new content
         self.title.delete(1.0, tk.END)
-        print(self.doc_info['title'])
         self.title.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['title'], ' '))
         if self.doc_info['current_seq_id'] != '-':
             self.content.delete(1.0, tk.END)
