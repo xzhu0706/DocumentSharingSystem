@@ -3,6 +3,7 @@
 import pandas as pd
 import time
 import numpy as np
+import AccountsManager
 
 
 path_to_documents_db = "database/Documents.csv"
@@ -63,6 +64,17 @@ def is_locker(userid, docid):
         return False
 
 
+def get_locker(docid):
+    '''This function returns a dictionary that contains the user id and user name of the locker of doc'''
+    locker_db = pd.read_csv(path_to_locker_db, index_col=0)
+    userid = locker_db.loc[docid]['locker_id']
+    locker = {
+        'id': userid,
+        'name': AccountsManager.get_user_info(userid)['username']
+    }
+    return locker
+
+
 def lock_doc(userid, docid):
     '''This function returns boolean value of whether user lock doc successfully'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
@@ -86,7 +98,7 @@ def unlock_doc(userid, docid):
     '''This function returns the boolean value of whether user unlock doc successfully'''
     locker_db = pd.read_csv(path_to_locker_db, index_col=0)
     try:
-        if locker_db.loc[docid]['locker_id'] == userid:
+        if locker_db.loc[docid]['locker_id'] == userid or is_owner(userid, docid):
             doc_db = pd.read_csv(path_to_documents_db, index_col=0)
             doc_db.loc[docid, 'is_locked'] = False
             doc_db.to_csv(path_to_documents_db)
@@ -129,6 +141,10 @@ def create_time_object():
     '''This function returns a datetime64 object of current time'''
     t = int(time.time())
     return np.datetime64(t, 's') - np.timedelta64(5, 'h')
+
+
+def time_to_str(time_obj):
+    return pd.Timestamp(time_obj)
 
 
 def update_doc(userid, docid, updated_content):
@@ -192,7 +208,8 @@ def add_warning(userid, docid):
 def main():
     ## Testing code here
     docid = 25
-    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    # docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    # print(get_doc_info(docid))
 
 
 

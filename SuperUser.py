@@ -11,7 +11,7 @@ class SuperUser(OrdinaryUser):
         super(SuperUser, self).__init__(parent, controller)
 
         update_membership_button = tk.Button(self, text="Manage Membership")  # ,command=lambda:TO BE IMPLEMENTED BY BACKEND, can update or remove user
-        taboo_words_button = tk.Button(self, text="Taboo Words")  # ,command=lambdaTO BE IMPLEMENTED BY BACKEND
+        taboo_words_button = tk.Button(self, text="Manage Taboo Words")  # ,command=lambdaTO BE IMPLEMENTED BY BACKEND
 
         # PLACING THE LABELS
         n = 150

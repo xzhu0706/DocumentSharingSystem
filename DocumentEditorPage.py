@@ -25,9 +25,9 @@ class DocumentEditorPage(DocumentViewerPage):
         lock_button.place(x=n + 325, y=m * 4)
         unlock_button.place(x=n + 325, y=m * 5)
         logout_button.place(x=n + 380, y=m - 20)
-        speech_recognition_button.place(x=n, y=m * 10 + 20)
+        speech_recognition_button.place(x=n - 120, y=m * 10 + 20)
 
-        # Check taboo words in title if document is just created
+        # Check taboo words in title if document was just created
         if self.doc_info['current_seq_id'] == '-':
             self.update_check()
 
@@ -48,12 +48,14 @@ class DocumentEditorPage(DocumentViewerPage):
     def lock_doc(self):
         if DocumentsManager.lock_doc(self.userid, self.docid):
             tk.messagebox.showinfo("", "You have successfully locked the document!")
+            self.display_content()
         else:
             tk.messagebox.showerror("", "Fail to lock the document because it's been locked by someone else!")
 
     def unlock_doc(self):
         if DocumentsManager.unlock_doc(self.userid, self.docid):
             tk.messagebox.showinfo("", "You have successfully unlocked the document!")
+            self.display_content()
         else:
             tk.messagebox.showerror("", "You cannot unlock a document unless you have locked it first!")
 
@@ -66,13 +68,14 @@ class DocumentEditorPage(DocumentViewerPage):
             DocumentsManager.update_doc(self.userid, self.docid, updated_content)
             # tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
             self.update_check()
+            self.display_content()
         else:
             tk.messagebox.showerror("", "Fail to update the document because you did not lock the document.")
 
     def update_check(self):
         taboo_list = self.get_taboo_words()
-        words_used = self.title.get(1.0, 'end-1c').split()
-        content_words = self.content.get(1.0, 'end-1c').split('\n')
+        words_used = self.title.get(1.0, tk.END).split()
+        content_words = self.content.get(1.0, tk.END).split('\n')
         words_used.extend(content_words)
         # empty list to store taboo words used
         taboo_used = []
@@ -89,37 +92,3 @@ class DocumentEditorPage(DocumentViewerPage):
         else:
             tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
 
-
-    def updateCheck(self):
-        # might need to check if it
-        # reading the Documents.csv file
-
-        document_db = pd.read_csv("database/Documents.csv", delimiter=',')
-        # gettig the opened document id
-        doc_id = self.controller.opened_docid
-        # making a list of all the documents ID in the Documents.csv
-        # so that we can find the index of the opened docuemnt
-        doc_id_list = list(document_db._getitem_column('doc_id'))
-        # making a list of all the contents of the Documents.csv
-        doc_content_list = list(document_db._getitem_column('title'))
-        # finding in which index our opened document is
-        index_of_doc_id = doc_id_list.index(doc_id)
-        # getting content of the opened document
-        this_document = list(doc_content_list[index_of_doc_id].split())
-        # reading the TabooWords.csv file
-        tabbo_db = pd.read_csv("database/TabooWords.csv", delimiter=',')
-        # making a list of all taboo words
-        tabboo_list = list(tabbo_db._getitem_column('word'))
-        # empty list to store taoo words found
-        tabboo_used = []
-
-        # checking if any taboo words in the content
-        for i in tabboo_list:
-            if i in this_document:
-                # add the word to the found taboo word list
-                tabboo_used.append(i)
-                # if any taboo words found
-        if len(tabboo_used) > 0:
-            tk.messagebox.showerror("Error","Update unsucessful\nFollowing taboo words used: \n{}".format(tabboo_used))
-        else:
-            tk.messagebox.showinfo("Information","Successfully updated")
