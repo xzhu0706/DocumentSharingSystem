@@ -26,7 +26,7 @@ def get_own_docs(userid):
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     own_docs = docs_db.loc[docs_db['owner_id'] == userid]
     own_docs.sort_values(['modified_at'], ascending=False, inplace=True)
-    return own_docs.head(3)
+    return own_docs
 
 # def get_sorted_docs():
 #     '''This function returns a dataframe of docs that is sorted by most read and most recent'''
@@ -36,7 +36,7 @@ def get_own_docs(userid):
 
 
 def get_docs_for_gu():
-    '''This function returns a sorted dataframe of 3 docs that a guest user can view'''
+    '''This function returns a sorted dataframe of docs that a guest user can view'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     public_docs = docs_db.loc[docs_db['scope'] == 'Public']
     restricted_docs = docs_db.loc[docs_db['scope'] == 'Restricted']
@@ -45,19 +45,30 @@ def get_docs_for_gu():
 
 
 def get_docs_for_ou(userid):
-    '''This function '''
-    #TODO
+    '''This function returns the dataframe of docs that a user own or can edit or can view'''
     own_docs = get_own_docs(userid)
-
-    # if len(own_docs) < 3:
-    #     docs = own_docs.append(get_docs_for_gu())
-    # return docs.head(3)
+    shared_docs = get_shared_docs_for_ou(userid)
+    docs = own_docs.append(shared_docs)
+    if len(docs) < 3:
+        docs = docs.append(get_docs_for_gu())
+    docs = sort_by_most_read_most_recent(docs)
+    return docs.head(3)
 
 
 def get_shared_docs_for_ou(userid):
-    '''This function '''
-    #TODO
+    '''This function returns the dataframe of docs that are shared to user'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    contributors_db = pd.read_csv(path_to_contributors_db)
+    shared_docs = contributors_db.loc[contributors_db['contributor_id'] == userid]
+    if not shared_docs.empty:
+        shared_docs_list = shared_docs['doc_id'].values.tolist()
+        shared_docs_df = pd.DataFrame()
+        for docid in shared_docs_list:
+            if shared_docs_df.empty:
+                shared_docs_df = docs_db.loc[docid].to_frame().transpose()
+            else:
+                shared_docs_df = shared_docs_df.append(docs_db.loc[docid].to_frame().transpose())
+        return shared_docs_df
 
 
 def sort_by_most_read_most_recent(docs_df):
@@ -173,10 +184,17 @@ def unlock_doc(userid, docid):
 
 
 def delete_doc(docid):
-    '''This function deletes the row of given docid from documents db'''
+    '''This function deletes the row of given docid from documents db and all its old versions from doc verions db'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    docs_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
     docs_db.drop(docid, inplace=True)
     docs_db.to_csv(path_to_documents_db)
+    filtered_docs_versions_db = docs_versions_db.loc[docs_versions_db['doc_id'] != docid]
+    filtered_docs_versions_db.to_csv(path_to_document_versions_db)
+    # TODO: delete from locker db
+    # TODO: delete from warninglist
+    # TODO: delete from contributors db
+    # TODO: maybe delete from complaints db and invitations db
 
 
 def create_new_doc(userid, scope, title):
@@ -272,8 +290,8 @@ def inc_views_count(docid):
 
 def main():
     ## Testing code here
-    docid = 41
-    userid = 1
+    docid = 40
+    userid = 3
     # docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     # print(get_doc_info(docid)['title'])
     # df = get_docs_for_gu()
@@ -285,7 +303,8 @@ def main():
     #           row['scope'],
     #           row['views_count'],
     #           row['modified_at'])
-    inc_views_count(docid)
+    get_docs_for_ou(userid)
+
 
 
 

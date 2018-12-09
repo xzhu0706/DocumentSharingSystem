@@ -1,75 +1,59 @@
 doc_id,owner_id,current_seq_id,scope,is_locked,views_count,modified_by,modified_at,title,content
-15,2,-,Private,False,10,2,2018-12-07 21:45:45,vohiyo,
-16,1,-,Shared,True,0,1,2018-12-07 22:04:43,ohiyo, 
-17,1,17-1,Private,True,4,1,2018-12-07T22:07:53,hey yo,"bala
-ba
-ba
-ba
-I'm
-loving
-it"
-18,2,-,Private,False,0,2,2018-12-07 22:14:14,yay, 
+15,2,-,Private,False,12,2,2018-12-07 21:45:45,vohiyo,
+16,1,-,Shared,False,2,1,2018-12-07 22:04:43,ohiyo, 
+18,2,-,Private,False,1,2,2018-12-07 22:14:14,yay, 
 19,2,19-1,Private,True,0,2,2018-12-07T22:14:57,bye,"bye
 world"
 20,2,-,Private,False,0,2,2018-12-07 22:18:47,sdf, 
-21,2,-,Private,True,0,2,2018-12-07 22:42:51,heilo, 
-22,2,-,Private,True,0,2,2018-12-07 22:43:45,ya, 
-23,2,-,Private,True,0,2,2018-12-07 23:06:14,bye, 
-24,2,-,Private,True,0,2,2018-12-07 23:08:37,yas, 
-25,2,25-1,Private,True,0,2,2018-12-07T23:10:13,j,"yeas
-yo"
-26,2,26-1,Shared,False,0,2,2018-12-07T23:47:45,yay,"jala
+21,2,-,Private,True,1,2,2018-12-07 22:42:51,heilo, 
+22,2,-,Private,True,0,2,2018-12-07 22:43:45,ya,
+26,2,26-2,Shared,False,4,3,2018-12-09 02:52:56,yay,"jala
 naya
-saronara"
-27,2,27-1,Restricted,True,4,2,2018-12-07T23:56:52,hala,"jana
+saronara
+I
+am
+editing
+a
+shared
+document"
+27,2,27-1,Restricted,False,6,2,2018-12-07T23:56:52,hala,"jana
 yaya"
-28,2,28-3,Private,False,0,2,2018-12-08T00:02:25,sa,"fsd
+28,2,28-3,Private,False,1,2,2018-12-08T00:02:25,sa,"fsd
 fds
 fds
 sdf
 jia
 jie"
-29,2,29-1,Private,True,0,2,2018-12-08T00:59:11,UNK ba yea fuck,"hello
+29,2,29-1,Private,False,1,2,2018-12-08T00:59:11,UNK ba yea fuck,"hello
 world
 bitch
 shit
 fuck
 yea
 bah"
-30,2,30-1,Private,True,0,2,2018-12-08T01:09:03,UNK ya bah f,"bitch
+30,2,30-1,Private,False,1,2,2018-12-08T01:09:03,UNK ya bah f,"bitch
 fuck
 ya
 hello
 bab
 yi"
-31,2,31-1,Private,True,0,2,2018-12-08T01:11:18,da fuck,"yea
+31,2,31-1,Private,False,1,2,2018-12-08T01:11:18,da fuck,"yea
 hi
 da
 fuck
 bitch
 shit
 meow"
-32,2,32-1,Private,False,0,2,2018-12-08T01:12:41,UNK fuck,"fuck
+32,2,32-1,Private,False,1,2,2018-12-08T01:12:41,UNK fuck,"fuck
 meow
 hi
 bitch
 yo"
-33,2,33-1,Private,True,0,2,2018-12-08T01:13:53,hi,"hello
+33,2,33-1,Private,False,1,2,2018-12-08T01:13:53,hi,"hello
 world
 bitch"
 34,2,-,Private,True,0,2,2018-12-08 01:14:28,shit, 
-35,2,-,Private,True,0,2,2018-12-08 01:17:17,yas, 
-36,2,36-7,Private,True,0,2,2018-12-08 23:14:56,yas,"UNK
-UNK
-ya
-heylo
-yaya
-ba
-ja
-solisoli
-yayaya
-UNK"
-37,4,37-2,Public,False,7,4,2018-12-08T04:45:42,alpaca,"once
+37,4,37-3,Public,False,12,4,2018-12-09 03:14:24,alpaca,"once
 upon
 a
 time
@@ -78,15 +62,11 @@ is
 an
 alpaca
 hello
-world"
-39,3,39-2,Private,False,1,3,2018-12-09 01:13:11,yay,"yas
+world
+jj"
+39,3,39-2,Private,False,2,3,2018-12-09 01:13:11,yay,"yas
 ya"
-40,4,40-2,Restricted,True,8,4,2018-12-08T18:13:49,hi hi,"bah
-la
-bah
-bah
-bah"
-41,4,41-2,Public,False,10,4,2018-12-08T18:14:22,ya ya,"jana
+41,4,41-2,Public,False,11,4,2018-12-08T18:14:22,ya ya,"jana
 ha
 ha
 ya"

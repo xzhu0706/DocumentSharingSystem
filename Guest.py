@@ -101,7 +101,8 @@ class Guest(tk.Frame):
         else:
             # TODO: fetch docs for OU and SU
             #docs = DocumentsManager.get_own_docs(self.controller.get_userid())
-            docs = pd.read_csv("database/Documents.csv", index_col=0)
+            # docs = pd.read_csv("database/Documents.csv", index_col=0)
+            docs = DocumentsManager.get_docs_for_ou(self.userid)
         print('fetching')
         print(self.controller.get_usertype())
         docs_tuple_list = []
