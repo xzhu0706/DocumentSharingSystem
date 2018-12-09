@@ -5,6 +5,7 @@ import time
 import numpy as np
 import AccountsManager
 
+pd.set_option('display.expand_frame_repr', False)
 
 path_to_documents_db = "database/Documents.csv"
 path_to_document_versions_db = "database/DocumentVersions.csv"
@@ -16,22 +17,75 @@ path_to_user_infos_db = "database/UserInfos.csv"
 path_to_warning_list_db = "database/WarningList.csv"
 path_to_locker_db = "database/Locker.csv"
 
+# TODO: load three docs for each user
+# different users should have their own page populated by his/her picture and 3 most recent documents.
+# For a brand-new user, the 3 most popular (most read and/or updated) files in the system are shown
 
-def load_docs(usertype, userid):
+def get_own_docs(userid):
+    '''This function returns a dataframe of 3 docs owned by user given the user id, docs are sorted by most recent'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    docs = docs_db['title']
+    own_docs = docs_db.loc[docs_db['owner_id'] == userid]
+    own_docs.sort_values(['modified_at'], ascending=False, inplace=True)
+    return own_docs.head(3)
 
-    # TODO: load three docs for each user
-    # different users should have their own page populated by his/her picture and 3 most recent documents.
-    # For a brand-new user, the 3 most popular (most read and/or updated) files in the system are shown
+# def get_sorted_docs():
+#     '''This function returns a dataframe of docs that is sorted by most read and most recent'''
+#     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+#     docs_db.sort_values(['views_count', 'modified_at'], ascending=False, inplace=True)
+#     return docs_db
 
-    print(docs)
+# Scopes:
+# public (can be seen by everyone),
+# restricted (can only be viewed as read-only by GU's and edited by OU's),
+# shared (viewed/edited by OU's who are invited),
+# private
+
+def get_docs_for_gu():
+    '''This function returns a sorted dataframe of 3 docs that a guest user can view'''
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    public_docs = docs_db.loc[docs_db['scope'] == 'Public']
+    restricted_docs = docs_db.loc[docs_db['scope'] == 'Restricted']
+    can_view_docs = public_docs.append(restricted_docs)
+    return sort_by_most_read_most_recent(can_view_docs).head(3)
 
 
-# unique sequence id: doc_id + nth version(current_version + 1)
+def get_docs_for_ou(userid):
+    '''This function '''
+    #TODO
+    own_docs = get_own_docs(userid)
+
+    # if len(own_docs) < 3:
+    #     docs = own_docs.append(get_docs_for_gu())
+    # return docs.head(3)
+
+
+def get_shared_docs_for_ou(userid):
+    '''This function '''
+    #TODO
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+
+
+def sort_by_most_read_most_recent(docs_df):
+    '''This function returns a sorted dataframe by most read and most recent'''
+    return docs_df.sort_values(['views_count', 'modified_at'], ascending=False)
+
+
+def sort_by_most_recent(docs_df):
+    '''This function returns a sorted dataframe by most recently updated'''
+    return docs_df.sort_values('modified_at', ascending=False)
+
+
+def sort_by_most_read(docs_df):
+    '''This function returns a sorted dataframe by mostly read'''
+    return docs_df.sort_values('views_count', ascending=False)
+
 
 # def can_view(uesrid, docid):
+    # userid = 0 stands for a guest user
     # TODO
+
+# def can_edit(userid, docid):
+#     # TODO
 
 
 def is_contributor(userid, docid):
@@ -139,15 +193,16 @@ def create_new_doc(userid, scope, title):
 def create_time_object():
     '''This function returns a datetime64 object of current time'''
     t = int(time.time())
-    return np.datetime64(t, 's') - np.timedelta64(5, 'h')
+    return pd.Timestamp(np.datetime64(t, 's') - np.timedelta64(5, 'h'))
 
 
-def time_to_str(time_obj):
-    return pd.Timestamp(time_obj)
+# def time_to_str(time_obj):
+#     return pd.Timestamp(time_obj)
 
 
 def update_doc(userid, docid, updated_content):
     '''This function updates the info of given document in the database'''
+    # unique sequence id: doc_id + '-' + nth version(current_version + 1)
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     old_seq_id = docs_db.loc[docid]['current_seq_id']
     if old_seq_id == '-':
@@ -204,12 +259,29 @@ def add_warning(userid, docid):
         df.to_csv(warning_list_db, index=False, header=False)
 
 
+def inc_views_count(docid):
+    '''Thid function increases the views count of the given docid by 1'''
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    docs_db.loc[docid, 'views_count'] += 1
+    docs_db.to_csv(path_to_documents_db)
+
+
 def main():
     ## Testing code here
-    docid = 25
+    docid = 41
+    userid = 1
     # docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    print(get_doc_info(docid)['title'])
-
+    # print(get_doc_info(docid)['title'])
+    # df = get_docs_for_gu()
+    # print(df)
+    # for docid, row in df.iterrows():
+    #     print(docid,
+    #           row['title'],
+    #           row['owner_id'],
+    #           row['scope'],
+    #           row['views_count'],
+    #           row['modified_at'])
+    inc_views_count(docid)
 
 
 

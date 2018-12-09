@@ -35,7 +35,7 @@ class OrdinaryUser(Guest):
         n = 150
         m = 50
 
-        delete_button.place(x=n + 50, y=m * 7)
+        delete_button.place(x=n + 20, y=m * 8 + 10)
         create_doc_button.place(x=n, y=m * 9.5)
         process_complaints_button.place(x=n + 300, y=m * 9.5)
         manage_invite_button.place(x=n + 300, y=m * 10)
@@ -130,29 +130,29 @@ class OrdinaryUser(Guest):
             username_list=tk.Listbox(self,height=10)#,width=10)
             # setting the title for the listbox
             username_list.insert(tk.END,"Users")
-            # lopping through the names of usernames
+            # looping through the names of usernames
             for names in user_list:
                 # check if text in search bar has anything from the name in the database
                 if self.user_result in names:
                     username_list.insert(tk.END,names)
-                    # kepping track of the indexes added to add the corresponding technical interests
+                    # keeping track of the indexes added to add the corresponding technical interests
                     index_list.append(user_list.index(names))
 
             # make a list box for technical interest
-            technicalinterest_list=tk.Listbox(self,height=10)
+            technical_interest_list=tk.Listbox(self, height=10)
             # setting the title for the listbox
-            technicalinterest_list.insert(tk.END,"Technical Interest")
+            technical_interest_list.insert(tk.END, "Technical Interest")
             # looping through the indexes added in the username_list
             for index in index_list:
                 # add that specific index of the technical_list
-                technicalinterest_list.insert(tk.END,technical_list[index])
+                technical_interest_list.insert(tk.END, technical_list[index])
 
             # cancel button to go back to the main page
             cancel_button=tk.Button(self,text="Cancel",command=self.destroy)#,command=lambda:mylistbox.get(ACTIVE))
 
             # setting up the layout of the dialog box
             username_list.grid(row=0,column=0)
-            technicalinterest_list.grid(row=0,column=1)
+            technical_interest_list.grid(row=0,column=1)
             cancel_button.grid(row=1,column=0)
 
             # this is the case when there is no match which simply destroys the box

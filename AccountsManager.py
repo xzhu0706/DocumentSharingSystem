@@ -31,6 +31,21 @@ def get_technical_interest(userid):
     return get_user_info(userid)['technical_interest']
 
 
+def is_warned(userid):
+    '''This function checks if the user is on warning list, if yes return the bad doc info dictionary'''
+    ## assuming no more than one doc contains taboo words per user
+    warning_list = pd.read_csv(path_to_warning_list_db)
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    user_on_list = warning_list[warning_list['user_id'] == userid]
+    if not user_on_list.empty:
+        bad_docid = user_on_list.get('doc_id').values[0]
+        bad_doc_title = docs_db.loc[bad_docid]['title']
+        return {
+            'bad_docid': bad_docid,
+            'bad_doc_title': bad_doc_title
+        }
+
+
 def is_pending(username):
     '''This function returns the boolean value of whether the given username exists in pending applications db'''
     accts_applications = pd.read_csv(path_to_accts_applications_db, index_col=0)

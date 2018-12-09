@@ -57,8 +57,8 @@ class DocumentViewerPage(tk.Frame):
         versions_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
 
         complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
-        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())#controller.show_frame(
-         #   controller.get_usertype()))  # jump back to user page
+        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else controller.show_frame(
+            controller.get_usertype()))  # jump back to user page
 
         n = 150
         m = 50
@@ -103,7 +103,7 @@ class DocumentViewerPage(tk.Frame):
         # update last modifier and time
         self.last_modified_var.set(
             "Last modified by {} at {}".format(AccountsManager.get_username(int(self.doc_info['modified_by'])),
-                                               DocumentsManager.time_to_str(self.doc_info['modified_at']))
+                                               self.doc_info['modified_at'])
         )
         ## TODO: display doc old versions
 

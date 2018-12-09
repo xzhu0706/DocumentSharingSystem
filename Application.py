@@ -9,6 +9,7 @@ from OrdinaryUser import *
 from Guest import *
 from DocumentOwnerPage import *
 import DocumentsManager
+import AccountsManager
 
 
 # Global Variables
@@ -25,7 +26,7 @@ class Application(tk.Tk):
         self.__usertype = 'Guest'
         self.opened_docid = 0
         self.is_warned = False
-        self.bad_docid = '0'
+        self.bad_docid = 0
         self.bad_doc_title = ''
 
         tk.Tk.__init__(self)
@@ -58,20 +59,27 @@ class Application(tk.Tk):
 
         self.show_frame("MainPage")
 
-        ## uncomment if you want to see the doc_owner page
+        # # uncomment if you want to see the doc_owner page
         # self.create_doc_owner_page()
         # self.show_frame("DocumentOwnerPage")
 
-        ## uncomment if you want to see the doc_editor page
+        # uncomment if you want to see the doc_editor page
         # self.create_doc_editor_page()
         # self.show_frame("DocumentEditorPage")
 
-        # uncomment if you want to see the doc_viewer page
+        # # uncomment if you want to see the doc_viewer page
         # self.create_doc_viewer_page()
         # self.show_frame("DocumentViewerPage")
 
     def show_frame(self, page_name):
         frame = self.page_array[page_name]
+
+        # if frame is a user page, call the fetch_docs function to update docs section
+        if isinstance(frame, Guest):
+            if page_name == 'Guest':
+                self.__usertype = 'Guest'
+            frame.fetch_docs()
+
         frame.tkraise()
 
     def log_in(self, username, userid, usertype):
@@ -84,7 +92,6 @@ class Application(tk.Tk):
             self.create_su_page()
         elif usertype == 'OrdinaryUser':
             if self.is_on_warning_list():
-                self.is_on_warning_list()
                 self.show_warning()
                 return
             else:
@@ -141,20 +148,19 @@ class Application(tk.Tk):
         print('created {} for document id {}'.format(doc_page, self.opened_docid))
 
     def is_on_warning_list(self):
-        ## assuming no more than one doc contains taboo words per user
-        warning_list = pd.read_csv("database/WarningList.csv", index_col=0)
-        docs_db = pd.read_csv("database/Documents.csv", index_col=0)
-        try:
-            docid = warning_list.loc[self.__userid]['doc_id']
-            self.is_warned = True
-            self.bad_docid = docid
+        bad_doc = AccountsManager.is_warned(self.__userid)
+        if bad_doc:
+            self.bad_docid = bad_doc['bad_docid']
+            self.bad_doc_title = bad_doc['bad_doc_title']
             self.opened_docid = self.bad_docid
-            self.bad_doc_title = docs_db.loc[docid]['title']
-            self.create_doc_editor_page()
-            self.show_frame("DocumentEditorPage")
+            self.is_warned = True
+            if DocumentsManager.is_owner(self.__userid, self.bad_docid):
+                self.create_doc_owner_page()
+                self.show_frame("DocumentOwnerPage")
+            else:
+                self.create_doc_editor_page()
+                self.show_frame("DocumentEditorPage")
             return True
-        except KeyError:
-            return False
 
         # user_on_list = warning_list[warning_list['user_id'] == self.__userid]
         # if not user_on_list.empty:

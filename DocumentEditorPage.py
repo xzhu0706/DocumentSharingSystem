@@ -50,7 +50,7 @@ class DocumentEditorPage(DocumentViewerPage):
             tk.messagebox.showinfo("", "You have successfully locked the document!")
             self.display_content()
         else:
-            tk.messagebox.showerror("", "Fail to lock the document because it's been locked by someone else!")
+            tk.messagebox.showerror("", "Fail to lock the document because it's been locked!")
 
     def unlock_doc(self):
         if DocumentsManager.unlock_doc(self.userid, self.docid):
