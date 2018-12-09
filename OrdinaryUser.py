@@ -8,12 +8,8 @@ class OrdinaryUser(Guest):
 
         super(OrdinaryUser, self).__init__(parent, controller)
 
-        self.username = controller.get_username()
-        self.userid = controller.get_userid()
-
         delete_button = tk.Button(self,
-                            text="Delete")  # command=lambda:
-        # TODO:NEED A FUNCTION TO DELETE A SELECTED DOCUMENT FROM BACKEND
+                            text="Delete", command=self.delete_doc)
 
         create_doc_button = tk.Button(self, text="Create A \n New Document ",fg="red",
                             command=lambda: self.create_new_doc())
@@ -59,6 +55,20 @@ class OrdinaryUser(Guest):
             self.controller.create_doc_owner_page()    # create new doc_owner_page
             self.controller.show_frame("DocumentOwnerPage")  # display page
 
+    def delete_doc(self):
+        if self.selected_docid:
+            if DocumentsManager.is_owner(self.userid, self.selected_docid):
+                msg_box = tk.messagebox.askquestion("Delete a document",
+                                                    "Are you sure you want to delete this document?",
+                                                    icon="warning")
+                if msg_box == 'yes':
+                    DocumentsManager.delete_doc(self.selected_docid)
+                    self.docs_section.delete(self.selected_docid)
+            else:
+                tk.messagebox.showerror("", "You cannot delete a document that is not owned by you!")
+        else:
+            tk.messagebox.showerror("", "Please select a document!")
+
     def search_user(self, result):
         user_box=self.display_user_box(result)
 
@@ -102,9 +112,12 @@ class OrdinaryUser(Guest):
             cancel_button.grid(row=2, column=0)
 
         def on_submit(self, title, scope):
-            self.init_info['title'] = title
-            self.init_info['scope'] = scope
-            self.destroy()
+            if not title:
+                tk.messagebox.showerror("", "You must fill out the title field in order to create a document!")
+            else:
+                self.init_info['title'] = title
+                self.init_info['scope'] = scope
+                self.destroy()
 
     # this class helps is invoked to display search results of user in a document page
     class display_user_box(tk.Toplevel):

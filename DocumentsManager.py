@@ -34,11 +34,6 @@ def get_own_docs(userid):
 #     docs_db.sort_values(['views_count', 'modified_at'], ascending=False, inplace=True)
 #     return docs_db
 
-# Scopes:
-# public (can be seen by everyone),
-# restricted (can only be viewed as read-only by GU's and edited by OU's),
-# shared (viewed/edited by OU's who are invited),
-# private
 
 def get_docs_for_gu():
     '''This function returns a sorted dataframe of 3 docs that a guest user can view'''
@@ -80,21 +75,33 @@ def sort_by_most_read(docs_df):
     return docs_df.sort_values('views_count', ascending=False)
 
 
-# def can_view(uesrid, docid):
-    # userid = 0 stands for a guest user
-    # TODO
+def get_scope(docid):
+    '''This function returns the scope of the doc'''
+    return get_doc_info(docid)['scope']
 
-# def can_edit(userid, docid):
-#     # TODO
+# Scopes:
+# public (can be seen by everyone),
+# restricted (can only be viewed as read-only by GU's and edited by OU's),
+# shared (viewed/edited by OU's who are invited),
+# private
+def is_viewer(uesrid, docid):
+    '''This function returns boolean value of whether an OU/SU can view a doc'''
+    scope = get_scope(docid)
+    if scope == 'Public' or scope == 'Restricted':
+        return True
 
 
 def is_contributor(userid, docid):
     '''This function returns boolean value of whether user is a contributor of doc'''
     contributors_db = pd.read_csv(path_to_contributors_db, index_col=0)
-    contributors = contributors_db.loc[contributors_db['doc_id'] == docid]['contributors_id'].values.tolist()
-    if userid in contributors:
+    # contributors = contributors_db.loc[contributors_db['doc_id'] == docid]['contributors_id'].values.tolist()
+    if get_scope(docid) == 'Restricted':
         return True
-    return False
+    try:
+        if contributors_db.loc[docid]['contributor_id'] == userid:
+            return True
+    except KeyError:
+        return False
 
 
 def is_owner(userid, docid):
@@ -163,6 +170,13 @@ def unlock_doc(userid, docid):
             return False
     except KeyError:
         return False
+
+
+def delete_doc(docid):
+    '''This function deletes the row of given docid from documents db'''
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    docs_db.drop(docid, inplace=True)
+    docs_db.to_csv(path_to_documents_db)
 
 
 def create_new_doc(userid, scope, title):
@@ -247,16 +261,6 @@ def get_doc_old_versions(docid):
     versions = versions_db[versions_db['doc_id'] == docid]
     # TODO: need to check with example, might contain error
     return versions
-
-
-def add_warning(userid, docid):
-    '''This function adds the user and the bad doc to warning list'''
-    df = pd.DataFrame({
-        'user_id': [userid],
-        'doc_id': [docid]
-    })
-    with open(path_to_warning_list_db, 'a') as warning_list_db:
-        df.to_csv(warning_list_db, index=False, header=False)
 
 
 def inc_views_count(docid):

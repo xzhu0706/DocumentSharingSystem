@@ -45,6 +45,15 @@ def is_warned(userid):
             'bad_doc_title': bad_doc_title
         }
 
+def add_warning(userid, docid):
+    '''This function adds the user and the bad doc to warning list'''
+    df = pd.DataFrame({
+        'user_id': [userid],
+        'doc_id': [docid]
+    })
+    with open(path_to_warning_list_db, 'a') as warning_list_db:
+        df.to_csv(warning_list_db, index=False, header=False)
+
 
 def is_pending(username):
     '''This function returns the boolean value of whether the given username exists in pending applications db'''

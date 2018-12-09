@@ -96,7 +96,7 @@ class Application(tk.Tk):
                 return
             else:
                 self.create_ou_page()
-        self.show_frame(usertype)
+        # self.show_frame(usertype)
 
     def show_warning(self):
         tk.messagebox.showwarning("Warning", "You are on the warning list because your \
@@ -118,6 +118,7 @@ class Application(tk.Tk):
         self.page_array[page_name] = su_page
         su_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for user id {}'.format(su_page, self.__userid))
+        self.show_frame('SuperUser')
 
     def create_ou_page(self):
         page_name = OrdinaryUser.__name__
@@ -125,6 +126,7 @@ class Application(tk.Tk):
         self.page_array[page_name] = ou_page
         ou_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for user id {}'.format(ou_page, self.__userid))
+        self.show_frame('OrdinaryUser')
 
     def create_doc_owner_page(self):
         page_name = DocumentOwnerPage.__name__
@@ -132,6 +134,7 @@ class Application(tk.Tk):
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for document id {}'.format(doc_page, self.opened_docid))
+        self.show_frame('DocumentOwnerPage')
 
     def create_doc_viewer_page(self):
         page_name = DocumentViewerPage.__name__
@@ -139,6 +142,7 @@ class Application(tk.Tk):
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for document id {}'.format(doc_page, self.opened_docid))
+        self.show_frame('DocumentViewerPage')
 
     def create_doc_editor_page(self):
         page_name = DocumentEditorPage.__name__
@@ -146,6 +150,7 @@ class Application(tk.Tk):
         self.page_array[page_name] = doc_page
         doc_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for document id {}'.format(doc_page, self.opened_docid))
+        self.show_frame('DocumentEditorPage')
 
     def is_on_warning_list(self):
         bad_doc = AccountsManager.is_warned(self.__userid)

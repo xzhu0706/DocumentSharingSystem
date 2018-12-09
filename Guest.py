@@ -2,13 +2,14 @@ import tkinter as tk
 from tkinter import ttk
 import DocumentsManager
 import AccountsManager
-import DocumentViewerPage
 import pandas as pd
 class Guest(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.username = controller.get_username()
+        self.userid = controller.get_userid()
 
         self.selected_docid = ''
 
@@ -47,7 +48,6 @@ class Guest(tk.Frame):
 
         #BUTTONS
         open_doc_button = tk.Button(self, text="Open", command=self.open_doc)
-        ## TODO: NEED TO CHANGE
 
         back_button = tk.Button(self, text="Back", command=lambda: controller.show_frame("MainPage"))
         suggest_taboo_button = tk.Button(self, text="Suggest Taboo Words", command=lambda:self.taboo_words_suggested())
@@ -72,18 +72,25 @@ class Guest(tk.Frame):
 
 
     def on_select_doc(self, event):
-        self.selected_docid = int(self.docs_section.identify_row(event.y))
+        selected_doc = (self.docs_section.identify_row(event.y))
+        if selected_doc:
+            self.selected_docid = int(selected_doc)
 
     def open_doc(self):
         if self.selected_docid:
+            self.controller.opened_docid = self.selected_docid
+            DocumentsManager.inc_views_count(self.selected_docid)
             if self.controller.get_usertype() == 'Guest':
-                self.controller.opened_docid = self.selected_docid
                 self.controller.create_doc_viewer_page()
-                self.controller.show_frame('DocumentViewerPage')
-                DocumentsManager.inc_views_count(self.selected_docid)
             else:
-                # TODO: need to check if OU/SU is contributor or owner
-                print('TODO')
+                if DocumentsManager.is_owner(self.userid, self.selected_docid):
+                    self.controller.create_doc_owner_page()
+                elif DocumentsManager.is_contributor(self.userid, self.selected_docid):
+                    self.controller.create_doc_editor_page()
+                elif DocumentsManager.is_viewer(self.userid, self.selected_docid):
+                    self.controller.create_doc_viewer_page()
+                else:
+                    tk.messagebox.showerror("", "Sorry, you don't have access to this document!")
         else:
             tk.messagebox.showerror("", "Please select a document!")
 
