@@ -14,6 +14,22 @@ path_to_warning_list_db = "database/WarningList.csv"
 path_to_locker_db = "database/Locker.csv"
 path_to_accts_applications_db = "database/PendingApplications.csv"
 
+
+def get_all_users():
+    '''This function returns a dataframe of all users in the db'''
+    user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)
+    return user_infos_db
+
+
+def get_all_users_id_name():
+    '''This function returns a dictionary of all users with id being key and username being values'''
+    user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)
+    user_infos_dict = {}
+    for id, user_info in user_infos_db.iterrows():
+        user_infos_dict[id] = user_info['username']
+    return user_infos_dict
+
+
 def get_user_info(userid):
     '''This function returns a dictionary of user info given the user id'''
     user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)

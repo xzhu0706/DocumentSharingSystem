@@ -1,6 +1,6 @@
 doc_id,owner_id,current_seq_id,scope,is_locked,views_count,modified_by,modified_at,title,content
 15,2,-,Private,False,12,2,2018-12-07 21:45:45,vohiyo,
-16,1,16-1,Shared,False,4,3,2018-12-09 22:57:05,ohiyo,"hello
+16,1,16-1,Shared,False,27,3,2018-12-09 22:57:05,ohiyo,"hello
 world"
 18,2,-,Private,False,1,2,2018-12-07 22:14:14,yay, 
 19,2,19-1,Private,True,0,2,2018-12-07 22:14:57,bye,"bye
@@ -26,7 +26,7 @@ fds
 sdf
 jia
 jie"
-37,4,37-3,Public,False,69,4,2018-12-09 03:14:24,alpaca,"once
+37,4,37-3,Public,False,70,4,2018-12-09 03:14:24,alpaca,"once
 upon
 a
 time
@@ -45,13 +45,15 @@ ha
 ya"
 42,2,42-2,Public,True,1,2,2018-12-09 19:04:52,hi yo,"hi
 yo"
-43,3,-,Shared,False,2,3,2018-12-09 19:08:04,ba ba, 
-44,3,44-3,Shared,True,4,3,2018-12-09 20:03:03,ya,"hello
+43,3,-,Shared,False,5,3,2018-12-09 19:08:04,ba ba, 
+44,3,44-3,Restricted,True,9,3,2018-12-09 20:03:03,ya,"hello
 world
 ya
 salu"
-45,3,45-1,Private,True,4,3,2018-12-09 19:11:11,yay,"ja
-na"
+45,3,45-2,Restricted,True,8,3,2018-12-10 15:05:56,yay,"ja
+na
+fdg
+fdg"
 48,1,48-1,Private,True,0,1,2018-12-09 19:36:07,zsj,"ajd
 sd"
 49,1,49-1,Private,True,0,1,2018-12-09 19:38:36,,"ja 
@@ -82,6 +84,6 @@ s
 d
 f
 g"
-57,3,57-1,Private,True,2,3,2018-12-09 20:15:18,ja na,"haa
+57,3,57-1,Restricted,True,8,3,2018-12-09 20:15:18,ja na,"haa
 fdg"
-58,1,-,Private,False,1,1,2018-12-09 20:15:51,ja, 
+58,1,-,Private,False,4,1,2018-12-09 20:15:51,ja, 

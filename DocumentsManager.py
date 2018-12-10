@@ -91,6 +91,16 @@ def get_scope(docid):
     '''This function returns the scope of the doc'''
     return get_doc_info(docid)['scope']
 
+
+def set_scope(docid, scope):
+    '''This function changes the current scope of doc to a new scope'''
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    scopes = ['Public', 'Restricted', 'Shared', 'Private']
+    if scope in scopes:
+        docs_db.loc[docid, 'scope'] = scope
+        docs_db.to_csv(path_to_documents_db)
+
+
 # Scopes:
 # public (can be seen by everyone),
 # restricted (can only be viewed as read-only by GU's and edited by OU's),

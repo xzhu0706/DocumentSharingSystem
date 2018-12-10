@@ -3,6 +3,7 @@ from tkinter import ttk
 import DocumentsManager
 import AccountsManager
 import pandas as pd
+
 class Guest(tk.Frame):
 
     def __init__(self, parent, controller):

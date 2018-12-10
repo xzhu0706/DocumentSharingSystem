@@ -1,13 +1,12 @@
 from DocumentEditorPage import *
+import DocumentsManager
+import AccountsManager
 
 class DocumentOwnerPage(DocumentEditorPage):
 
     def __init__(self, parent, controller):
 
         super(DocumentOwnerPage, self).__init__(parent, controller)
-        
-
-        manage_contributor_button = tk.Button(self, text="Manage Contributors")#,command=lambda:)
 
         OPTIONS = [
             "Private",
@@ -15,103 +14,116 @@ class DocumentOwnerPage(DocumentEditorPage):
             "Restricted",
             "Public"
         ]
-        variable = tk.StringVar(self)
-        variable.set("Scopes")
+        self.selected_scope_var = tk.StringVar(self)
+        self.selected_scope_var.set(self.doc_info['scope'])
 
-        # DROP DOWN
-        # REFRENE FOR DROP DOWN
-        '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
-        scopes_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
+        scopes_drop_down = tk.OptionMenu(self, self.selected_scope_var, *OPTIONS)
+
+        manage_contributor_button = tk.Button(self, text="Manage Contributors", command=self.manage_contributors)
+        set_scope_button = tk.Button(self, fg="red", text=" Set ", command=self.set_scope)
 
         n = 150
         m = 50
 
         manage_contributor_button.place(x=n+325, y=m*6)
+        set_scope_button.place(x=n+420, y=m+51)
         scopes_drop_down.place(x=n+325, y=m+50)
 
 
-# class DocumentPage(tk.Frame):
-#
-#     def __init__(self, parent, controller):
-#
-#         self.username = controller.get_username()
-#         self.docid = controller.get_docid()
-#
-#         tk.Frame.__init__(self, parent)
-#         self.controller = controller
-#         label_type = tk.Label(self, text="® FourofUS 2018", fg = "gray",font=controller.footer_font)
-#         label1 = tk.Label(self, text="ShareWithME")
-#         label1.config(font=("Courier", 35, 'bold'))
-#         label_title = tk.Label(self, text="Title")
-#         label_content = tk.Label(self, text="Content")
-#         self.title = Text(self, height=1, width=30, highlightbackground="black", highlightcolor="black", highlightthickness=1,
-#                           font=("Times New Roman", 18))
-#         self.content = Text(self, height=25, width=60, highlightbackground="black", highlightcolor="black", highlightthickness=1,)
-#         #need to save everythin in it lets after 10 sec
-#         # content.insert(CURRENT,"HellO")
-#
-#         OPTIONS = [
-#                    "Version 3",
-#                    "Version 2",
-#                    "Version 1"
-#                    ] #etc
-#         variable = StringVar(self)
-#         variable.set("All versions")
-#
-#         #DROP DOWN
-#         ##REFRENE FOR DROP DOWN
-#         '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
-#         #need to be replaced by the bakend data
-#         versions_drop_down = OptionMenu(self, variable, *OPTIONS)
-#
-#         speech_recognition_button = tk.Button(self, fg="red", text="Speech Recognition", command=self.speech_recognition)
-#
-#         update_button = tk.Button(self, text="Update")#,command=lambda:)
-#         lock_button = tk.Button(self, text="Lock")#,command=lambda:)
-#
-#         unlock_button = tk.Button(self, text="Unlock" )#,command=lambda:)
-#         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
-#
-#         add_contributor_button = tk.Button(self, text="Manage Contributors")#,command=lambda:)
-#
-#         complain_button = tk.Button(self, text="Complain")#,command=lambda:)
-#         back_button = tk.Button(self, text="Back", command=lambda: controller.show_frame(controller.get_usertype())) # jump back to user page
-#
-#
-#         n = 150
-#         m = 50
-#
-#         label_type.pack(side=BOTTOM)
-#         label1.pack(side=TOP, ipady=20)
-#         label_title.place(x=n-120, y=m+10)
-#         self.title.place(x=n-120, y=m+30)
-#         label_content.place(x=n-120, y=m+70)
-#         self.content.place(x=n-120, y=m+90)
-#         versions_drop_down.place(x=n+325,y=m+20)
-#
-#         update_button.place(x=n+325, y=m*3)
-#         lock_button.place(x=n+325, y=m*4)
-#         unlock_button.place(x=n+325, y=m*5)
-#         logout_button.place(x=n+380, y=m-20)
-#         add_contributor_button.place(x=n+325, y=m*6)
-#         complain_button.place(x=n+325, y=m*7)
-#         back_button.place(x=n+325, y=m*8)
-#         speech_recognition_button.place(x=n, y=m * 10 + 20)
-#
-#
-#     def speech_recognition(self):
-#         r = sr.Recognizer()
-#
-#         print('start speech')
-#
-#         with sr.Microphone() as source:
-#             audio = r.listen(source)
-#         try:
-#             # print(r.recognize_google(audio))
-#             content = r.recognize_google(audio).split()
-#             for word in content:
-#                 self.content.insert(CURRENT, word + '\n')
-#                 print(word)
-#         except Exception as e:
-#             print("Could not request results from Google \
-#                 Speech Recognition service; {0}".format(e))
+    class ManageContributorsBox(tk.Toplevel):
+        # This class is a pop up box that let user to manage contributors
+
+        def __init__(self, docid): # pass in docid to constructor
+            tk.Toplevel.__init__(self)
+
+            self.contributors = DocumentsManager.get_contributors(docid)
+            self.docid = docid
+
+            self.title("Manage Contributors")
+            contributors_label = tk.Label(self, text="Contributors")
+            all_users_label = tk.Label(self, text="All Users")
+
+            #################################################################
+            # drop down for all users
+            self.all_users_dict = AccountsManager.get_all_users_id_name()
+            self.all_users_name_list = [self.all_users_dict[user] for user in self.all_users_dict]
+            self.selected_user_var = tk.StringVar(self)
+            self.selected_user_var.set("All Users")
+            all_users_drop_down = tk.OptionMenu(self, self.selected_user_var, *self.all_users_name_list)
+
+            #################################################################
+            # list box for contributors
+            # remember index for each contributor in the list
+            self.contributor_id_list_in_index_order = []
+            self.contributors_list_box = tk.Listbox(self, height=6)
+            for contributor_id in self.contributors:
+                self.contributors_list_box.insert(tk.END, AccountsManager.get_username(contributor_id))
+                self.contributor_id_list_in_index_order.append(contributor_id)
+
+            #################################################################
+
+            add_button = tk.Button(self, fg="red", text="Add", command=self.add_contributor)
+            remove_button = tk.Button(self, fg="red", text="Remove", command=self.remove_contributor)
+            back_button = tk.Button(self, text="Back", command=self.destroy)
+
+
+            contributors_label.grid(row=0)
+            all_users_label.grid(row=1)
+
+            self.contributors_list_box.grid(row=0, column=1)
+            all_users_drop_down.grid(row=1, column=1)
+
+            add_button.grid(row=1, column=2)
+            remove_button.grid(row=0, column=2)
+            back_button.grid(row=2, column=2)
+
+        def add_contributor(self):
+            selected_user_name = self.selected_user_var.get()
+            selected_user_id = ''
+
+            for id, name in self.all_users_dict.items():
+                if name == selected_user_name:
+                    selected_user_id = id
+
+            if selected_user_id in self.contributor_id_list_in_index_order:
+                tk.messagebox.showerror("", "The user is already a contributor!")
+            elif DocumentsManager.is_owner(selected_user_id, self.docid):
+                tk.messagebox.showerror("", "You cannot add yourself to be the contributor!")
+            else:
+                DocumentsManager.add_contributor(selected_user_id, self.docid)
+                self.contributor_id_list_in_index_order.append(selected_user_id)
+                self.contributors_list_box.insert(tk.END, selected_user_name)
+
+        def remove_contributor(self):
+            selected_index = self.contributors_list_box.curselection()[0]
+            selected_userid = self.contributor_id_list_in_index_order[selected_index]
+            DocumentsManager.remove_contributor(selected_userid, self.docid)
+            self.contributors_list_box.delete(selected_index)
+            self.contributor_id_list_in_index_order.pop(selected_index)
+
+
+    def manage_contributors(self):
+        if self.doc_info['scope'] != 'Shared':
+            tk.messagebox.showerror("", "You can only manage contributors if the document is Shared. Please"
+                                        "change the scope of document to Shared if you want to do so.")
+        else:
+            self.ManageContributorsBox(self.docid)
+
+
+    def set_scope(self):
+        current_scope = self.doc_info['scope']
+        new_scope = self.selected_scope_var.get()
+        if current_scope == 'Shared':
+            msg_box = tk.messagebox.askquestion("Change Scope",
+                                                "This is a Shared document. Are you sure you want to change the scope to {}? "
+                                                "If you do, all contributors of this document will be removed.".format(new_scope),
+                                                icon="warning")
+            if msg_box == 'yes':
+                DocumentsManager.set_scope(self.docid, new_scope)
+                DocumentsManager.remove_all_contributor(self.docid)
+                tk.messagebox.showinfo("", "Set scope successfully!")
+                self.fetch_status()
+            return
+        DocumentsManager.set_scope(self.docid, new_scope)
+        tk.messagebox.showinfo("", "Set scope successfully!")
+        self.fetch_status()

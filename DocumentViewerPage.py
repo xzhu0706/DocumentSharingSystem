@@ -48,6 +48,7 @@ class DocumentViewerPage(tk.Frame):
         self.doc_versions_list = []
         self.versions_drop_down = tk.OptionMenu(self, self.version_var, None)
 
+        # TODO: need function and GUI
         complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
         back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())#controller.show_frame(
             #controller.get_usertype()))  # jump back to user page
@@ -70,7 +71,7 @@ class DocumentViewerPage(tk.Frame):
         scope_label.place(x=n - 40, y=m + 70)
         owner_label.place(x=n + 160, y=m + 70)
 
-        #display doc info
+        # display doc info
         self.refresh_content()
 
     def fetch_title_and_content(self):
