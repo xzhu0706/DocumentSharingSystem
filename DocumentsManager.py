@@ -17,22 +17,22 @@ path_to_user_infos_db = "database/UserInfos.csv"
 path_to_warning_list_db = "database/WarningList.csv"
 path_to_locker_db = "database/Locker.csv"
 
-# TODO: load three docs for each user
+#
 # different users should have their own page populated by his/her picture and 3 most recent documents.
 # For a brand-new user, the 3 most popular (most read and/or updated) files in the system are shown
 
+def get_all_docs():
+    '''This function returns a dataframe of all docs in the db sorted by most recently updated'''
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    return sort_by_most_recent(docs_db)
+
+
 def get_own_docs(userid):
-    '''This function returns a dataframe of 3 docs owned by user given the user id, docs are sorted by most recent'''
+    '''This function returns a dataframe of docs owned by user given the user id, docs are sorted by most recent'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     own_docs = docs_db.loc[docs_db['owner_id'] == userid]
     own_docs.sort_values(['modified_at'], ascending=False, inplace=True)
     return own_docs
-
-# def get_sorted_docs():
-#     '''This function returns a dataframe of docs that is sorted by most read and most recent'''
-#     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-#     docs_db.sort_values(['views_count', 'modified_at'], ascending=False, inplace=True)
-#     return docs_db
 
 
 def get_docs_for_gu():
@@ -45,13 +45,13 @@ def get_docs_for_gu():
 
 
 def get_docs_for_ou(userid):
-    '''This function returns the dataframe of docs that a user own or can edit or can view'''
+    '''This function returns the dataframe of docs that a user own or can edit or can view for the user home page'''
     own_docs = get_own_docs(userid)
     shared_docs = get_shared_docs_for_ou(userid)
     docs = own_docs.append(shared_docs)
     if len(docs) < 3:
-        docs = docs.append(get_docs_for_gu())
-    docs = sort_by_most_read_most_recent(docs)
+        docs = docs.append(get_docs_for_gu())  # if less than 3 docs available, call get docs for gu
+        docs.drop_duplicates(inplace=True)  # prevent duplicates of doc
     return docs.head(3)
 
 
@@ -68,7 +68,8 @@ def get_shared_docs_for_ou(userid):
                 shared_docs_df = docs_db.loc[docid].to_frame().transpose()
             else:
                 shared_docs_df = shared_docs_df.append(docs_db.loc[docid].to_frame().transpose())
-        return shared_docs_df
+        return sort_by_most_recent(shared_docs_df)
+    return shared_docs
 
 
 def sort_by_most_read_most_recent(docs_df):
@@ -95,24 +96,24 @@ def get_scope(docid):
 # restricted (can only be viewed as read-only by GU's and edited by OU's),
 # shared (viewed/edited by OU's who are invited),
 # private
-def is_viewer(uesrid, docid):
+def is_viewer(docid):
     '''This function returns boolean value of whether an OU/SU can view a doc'''
     scope = get_scope(docid)
     if scope == 'Public' or scope == 'Restricted':
         return True
 
 
-def is_contributor(userid, docid):
+def is_contributor(userid, docid, is_su):
     '''This function returns boolean value of whether user is a contributor of doc'''
-    contributors_db = pd.read_csv(path_to_contributors_db, index_col=0)
-    # contributors = contributors_db.loc[contributors_db['doc_id'] == docid]['contributors_id'].values.tolist()
-    if get_scope(docid) == 'Restricted':
+    contributors_db = pd.read_csv(path_to_contributors_db)
+    if is_su or get_scope(docid) == 'Restricted':
         return True
-    try:
-        if contributors_db.loc[docid]['contributor_id'] == userid:
+    contributors_df = contributors_db.loc[contributors_db['doc_id'] == docid]
+    if not contributors_df.empty:
+        contributors = contributors_df['contributor_id'].tolist()
+        if userid in contributors:
             return True
-    except KeyError:
-        return False
+    return False
 
 
 def is_owner(userid, docid):
@@ -166,11 +167,11 @@ def lock_doc(userid, docid):
         return True
 
 
-def unlock_doc(userid, docid):
+def unlock_doc(userid, docid, is_su):
     '''This function returns the boolean value of whether user unlock doc successfully'''
     locker_db = pd.read_csv(path_to_locker_db, index_col=0)
     try:
-        if locker_db.loc[docid]['locker_id'] == userid or is_owner(userid, docid):
+        if locker_db.loc[docid]['locker_id'] == userid or is_owner(userid, docid) or is_su:
             doc_db = pd.read_csv(path_to_documents_db, index_col=0)
             doc_db.loc[docid, 'is_locked'] = False
             doc_db.to_csv(path_to_documents_db)
@@ -185,15 +186,29 @@ def unlock_doc(userid, docid):
 
 def delete_doc(docid):
     '''This function deletes the row of given docid from documents db and all its old versions from doc verions db'''
-    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    # delete from locker db if it was locked
+    if get_doc_info(docid)['is_locked'] == True:
+        locker_db = pd.read_csv(path_to_locker_db, index_col=0)
+        locker_db.drop(docid, inplace=True)
+        locker_db.to_csv(path_to_locker_db)
+    # delete from contributors db if scope was Shared
+    if get_scope(docid) == 'Shared':
+        remove_all_contributor(docid)
+    # delete from warning list if necessary
+    warning_list = pd.read_csv(path_to_warning_list_db)
+    on_warning_list = warning_list.loc[warning_list['doc_id'] == docid]
+    if not on_warning_list.empty:
+        index = on_warning_list.index[0]
+        warning_list.drop(index=index, inplace=True)
+        warning_list.to_csv(path_to_warning_list_db, index=False)
+    # delete from doc versions db
     docs_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
-    docs_db.drop(docid, inplace=True)
-    docs_db.to_csv(path_to_documents_db)
     filtered_docs_versions_db = docs_versions_db.loc[docs_versions_db['doc_id'] != docid]
     filtered_docs_versions_db.to_csv(path_to_document_versions_db)
-    # TODO: delete from locker db
-    # TODO: delete from warninglist
-    # TODO: delete from contributors db
+    # delete from docs db
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    docs_db.drop(docid, inplace=True)
+    docs_db.to_csv(path_to_documents_db)
     # TODO: maybe delete from complaints db and invitations db
 
 
@@ -265,7 +280,6 @@ def store_old_version(old_version, based_on_seq_id, based_on_content):
         df.to_csv(versions_db, index=False, header=False)
 
 
-
 def get_doc_info(docid):
     '''This function returns a dataframe of document information from Document.csv'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
@@ -274,36 +288,98 @@ def get_doc_info(docid):
 
 
 def get_doc_old_versions(docid):
-    '''This function returns the row(s) of old versions of document'''
-    versions_db = pd.read_csv(path_to_document_versions_db)
+    '''This function returns the dataframe that contains old version(s) of document,
+        if no old version found then returns an empty dataframe'''
+    versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
     versions = versions_db[versions_db['doc_id'] == docid]
-    # TODO: need to check with example, might contain error
+    versions.sort_index(ascending=False, inplace=True)
     return versions
 
 
 def inc_views_count(docid):
-    '''Thid function increases the views count of the given docid by 1'''
+    '''This function increases the views count of the given docid by 1'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     docs_db.loc[docid, 'views_count'] += 1
     docs_db.to_csv(path_to_documents_db)
 
 
+def add_contributor(userid, docid):
+    '''This function adds the user to the contributors list of the doc'''
+    df = pd.DataFrame({
+        'doc_id': [docid],
+        'contributor_id': [userid]
+    })
+    with open(path_to_contributors_db, 'a') as contributors_db:
+        df.to_csv(contributors_db, index=False, header=False)
+
+
+def remove_contributor(userid, docid):
+    '''This function removes the user to the contributors list of the doc'''
+    contributors_db = pd.read_csv(path_to_contributors_db)
+    contributors_df = contributors_db.loc[contributors_db['doc_id'] == docid]
+    contributor = contributors_df.loc[contributors_df['contributor_id'] == userid]
+    if not contributor.empty:
+        index = contributor.index[0]
+        contributors_db.drop(index=index, inplace=True)
+        contributors_db.to_csv(path_to_contributors_db, index=False)
+
+
+def remove_all_contributor(docid):
+    '''This function removes all contributors of the given doc'''
+    contributors_db = pd.read_csv(path_to_contributors_db)
+    contributors_df = contributors_db.loc[contributors_db['doc_id'] == docid]
+    if not contributors_df.empty:
+        index_list = contributors_df.index.tolist()
+        print(index_list)
+        for index in index_list:
+            contributors_db.drop(index=index, inplace=True)
+        contributors_db.to_csv(path_to_contributors_db, index=False)
+
+
+def get_contributors(docid):
+    '''This function returns a list of contributors' id of the given docid'''
+    contributors_db = pd.read_csv(path_to_contributors_db)
+    contributors_df = contributors_db.loc[contributors_db['doc_id'] == docid]
+    return contributors_df['contributor_id'].tolist()
+
+
+def retrieve_old_version(seq_id):
+    '''This function returns the content of given seq_id'''
+    doc_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    old_version = doc_versions_db.loc[seq_id]
+    based_on_seq_id = old_version['based_on_seq_id']
+    edit_commands_sequence = old_version['editing_commands']
+    try:
+        while True:  # keep looking for based_on_seq_id in the versions db
+            ver = doc_versions_db.loc[based_on_seq_id]
+            edit_commands_sequence = ver['editing_commands'] + ';' + edit_commands_sequence
+            based_on_seq_id = ver['based_on_seq_id']
+    except KeyError:  # when catch an error means we reach the current version, read current content from docs db
+        curr_ver = docs_db.loc[int(based_on_seq_id.split('-')[0])]
+        based_on_content = curr_ver['content'].split('\n')
+    edit_commands = edit_commands_sequence.split(';')  # split to list
+    # Three types of commands:
+    # add nth word
+    # delete nth
+    # update nth word
+    for command in edit_commands:
+        op = command.split()
+        if op[0] == 'add':
+            based_on_content.insert(int(op[1]), op[2])
+        elif op[0] == 'delete':
+            based_on_content.pop(int(op[1]))
+        elif op[0] == 'update':
+            based_on_content[int(op[1])] = op[2]
+    return '\n'.join(based_on_content)
+
+
 def main():
     ## Testing code here
-    docid = 40
+    docid = 47
     userid = 3
-    # docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    # print(get_doc_info(docid)['title'])
-    # df = get_docs_for_gu()
-    # print(df)
-    # for docid, row in df.iterrows():
-    #     print(docid,
-    #           row['title'],
-    #           row['owner_id'],
-    #           row['scope'],
-    #           row['views_count'],
-    #           row['modified_at'])
-    get_docs_for_ou(userid)
+    docs_db = pd.read_csv(path_to_documents_db, index_col=0)
+    doc_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
 
 
 

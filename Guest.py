@@ -48,8 +48,10 @@ class Guest(tk.Frame):
 
         #BUTTONS
         open_doc_button = tk.Button(self, text="Open", command=self.open_doc)
+        refresh_button = tk.Button(self, text="Refresh", command=self.fetch_docs_for_home_page)
 
-        back_button = tk.Button(self, text="Back", command=lambda: controller.show_frame("MainPage"))
+        back_button = tk.Button(self, text="Back",
+                                command=self.destroy)
         suggest_taboo_button = tk.Button(self, text="Suggest Taboo Words", command=lambda:self.taboo_words_suggested())
 
         #PLACING THE LABELS
@@ -64,11 +66,14 @@ class Guest(tk.Frame):
         scroll_bar.pack(side=tk.RIGHT)
         scroll_bar.place(x=580,y=m*5+60)
 
-
         #PLACING BUTTONS
         open_doc_button.place(x=n-50,y=m*8+10)
         back_button.place(x=n+100, y=m*8+10)
         suggest_taboo_button.place(x=n+300, y=m*10.5)
+        refresh_button.place(x=n+390, y=m*5+5)
+
+        ## Call fetch docs function
+        self.fetch_docs_for_home_page()
 
 
     def on_select_doc(self, event):
@@ -85,44 +90,40 @@ class Guest(tk.Frame):
             else:
                 if DocumentsManager.is_owner(self.userid, self.selected_docid):
                     self.controller.create_doc_owner_page()
-                elif DocumentsManager.is_contributor(self.userid, self.selected_docid):
+                elif DocumentsManager.is_contributor(self.userid, self.selected_docid, self.controller.is_su()):
                     self.controller.create_doc_editor_page()
-                elif DocumentsManager.is_viewer(self.userid, self.selected_docid):
+                elif DocumentsManager.is_viewer(self.selected_docid):
                     self.controller.create_doc_viewer_page()
                 else:
                     tk.messagebox.showerror("", "Sorry, you don't have access to this document!")
         else:
             tk.messagebox.showerror("", "Please select a document!")
 
-    def fetch_docs(self):
+    def fetch_docs_for_home_page(self):
         if self.controller.get_usertype() == 'Guest':
             docs = DocumentsManager.get_docs_for_gu()
-            print('is a guest')
         else:
-            # TODO: fetch docs for OU and SU
-            #docs = DocumentsManager.get_own_docs(self.controller.get_userid())
-            # docs = pd.read_csv("database/Documents.csv", index_col=0)
             docs = DocumentsManager.get_docs_for_ou(self.userid)
-        print('fetching')
-        print(self.controller.get_usertype())
-        docs_tuple_list = []
-        for docid, row in docs.iterrows():
-            docs_tuple_list.append(
-                (docid,
-                 row['title'],
-                 AccountsManager.get_username(row['owner_id']),
-                 row['scope'],
-                 row['views_count'],
-                 row['modified_at']
-                 ))
-        for doc in self.docs_section.get_children():
-            self.docs_section.delete(doc)
-        for doc in docs_tuple_list:
-            self.docs_section.insert('', tk.END, iid=doc[0], values=doc)
+        self.refresh_doc_section(docs)
 
+    def refresh_doc_section(self, docs):
+        docs_tuple_list = []
+        if not docs.empty:
+            for docid, row in docs.iterrows():
+                docs_tuple_list.append(
+                    (docid,
+                     row['title'],
+                     AccountsManager.get_username(row['owner_id']),
+                     row['scope'],
+                     int(row['views_count']),  # make sure it's integer (sometimes it becomes float idk why)
+                     row['modified_at']))
+        for old_doc in self.docs_section.get_children():
+            self.docs_section.delete(old_doc)
+        for new_doc in docs_tuple_list:
+            self.docs_section.insert('', tk.END, iid=new_doc[0], values=new_doc)
 
     def taboo_words_suggested(self):
-        box = self.taboo_box()  # create the dialog box to ask for title and scope for creating doc
+        box = self.taboo_box()
         self.wait_window(box)
 
     class taboo_box(tk.Toplevel):
@@ -153,7 +154,3 @@ class Guest(tk.Frame):
             print("Information updated in the database")
             self.destroy()
 
-
-
-
-    #def open_doc(self, ):

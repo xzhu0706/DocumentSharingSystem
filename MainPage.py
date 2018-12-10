@@ -32,7 +32,7 @@ class MainPage(tk.Frame):
         button_signup = tk.Button(self, text="Sign Up",command=lambda: controller.show_frame("SignupPage"))
         button_login = tk.Button(self, text="Log In",command=lambda: self.log_in(entry_name.get(),
                                                                                 entry_password.get()))
-        button_guest = tk.Button(self, text="Guest User",command=lambda: controller.show_frame("Guest"))
+        button_guest = tk.Button(self, text="Guest User",command=lambda: controller.log_in_as_guest())
         #**********************
         #TODO: Need to work on this
         #**********************

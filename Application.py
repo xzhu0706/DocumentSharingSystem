@@ -45,7 +45,7 @@ class Application(tk.Tk):
 
         # Classes array
         self.page_array = {}
-        data = [MainPage, SignupPage, Guest]
+        data = [MainPage, SignupPage]
 
         for page in data:
             page_name = page.__name__
@@ -73,14 +73,13 @@ class Application(tk.Tk):
 
     def show_frame(self, page_name):
         frame = self.page_array[page_name]
-
-        # if frame is a user page, call the fetch_docs function to update docs section
-        if isinstance(frame, Guest):
-            if page_name == 'Guest':
-                self.__usertype = 'Guest'
-            frame.fetch_docs()
-
         frame.tkraise()
+
+    def log_in_as_guest(self):
+        self.__username = 'Guest'
+        self.__usertype = 'Guest'
+        self.__userid = 0
+        self.create_gu_page()
 
     def log_in(self, username, userid, usertype):
         self.__username = username
@@ -96,12 +95,30 @@ class Application(tk.Tk):
                 return
             else:
                 self.create_ou_page()
-        # self.show_frame(usertype)
+
+    def log_out(self):
+        self.__username = ''
+        self.__userid = 0
+        self.__usertype = Guest
+        self.is_warned = False
+        self.bad_docid = 0
+        self.bad_doc_title = ''
+        self.show_frame("MainPage")
+        print('logged out')
+
+    def is_guest(self):
+        return self.__usertype == 'Guest'
+
+    def is_su(self):
+        return self.__usertype == 'SuperUser'
+
+    def is_ou(self):
+        return self.__usertype == 'OrdinaryUser'
 
     def show_warning(self):
-        tk.messagebox.showwarning("Warning", "You are on the warning list because your \
-                                    document named \"{}\" contains taboo words! Please fix it before you conduct any other activity.".format(
-            self.bad_doc_title))
+        tk.messagebox.showwarning("Warning", "You are on the warning list because your"
+                                    "document named \"{}\" contains taboo words!"
+                                    "Please fix it before you conduct any other activity.".format(self.bad_doc_title))
 
     def get_username(self):
         return self.__username
@@ -127,6 +144,14 @@ class Application(tk.Tk):
         ou_page.grid(row=0, column=0, sticky="nsew")
         print('created {} for user id {}'.format(ou_page, self.__userid))
         self.show_frame('OrdinaryUser')
+
+    def create_gu_page(self):
+        page_name = Guest.__name__
+        gu_page = Guest(parent=self.container, controller=self)
+        self.page_array[page_name] = gu_page
+        gu_page.grid(row=0, column=0, sticky="nsew")
+        print('created {} for guest'.format(gu_page))
+        self.show_frame('Guest')
 
     def create_doc_owner_page(self):
         page_name = DocumentOwnerPage.__name__
@@ -166,17 +191,6 @@ class Application(tk.Tk):
                 self.create_doc_editor_page()
                 self.show_frame("DocumentEditorPage")
             return True
-
-        # user_on_list = warning_list[warning_list['user_id'] == self.__userid]
-        # if not user_on_list.empty:
-        #     self.is_warned = True
-        #     self.bad_docid = user_on_list.get('doc_id').values[0]
-        #     bad_doc = DocumentsManager.get_doc_info(self.bad_docid)
-        #     self.bad_doc_title = bad_doc.get('title').values[0]
-        #     self.opened_docid = self.bad_docid
-        #     self.create_doc_editor_page()        ## show the bad doc editor page
-        #     self.show_frame("DocumentEditorPage")
-        #     return True
 
 
 #main()

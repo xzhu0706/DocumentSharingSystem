@@ -8,21 +8,19 @@ class OrdinaryUser(Guest):
 
         super(OrdinaryUser, self).__init__(parent, controller)
 
-        delete_button = tk.Button(self,
-                            text="Delete", command=self.delete_doc)
-
-        create_doc_button = tk.Button(self, text="Create A \n New Document ",fg="red",
-                            command=lambda: self.create_new_doc())
+        get_own_docs_button = tk.Button(self, text="My Documents", fg="green",command=self.fetch_own_docs)
+        get_shared_docs_button = tk.Button(self, text="Shared With Me", fg="green", command=self.fetch_shared_docs)
+        get_all_docs_button = tk.Button(self, text="All Documents", fg="green", command=self.fetch_all_docs)
+        delete_button = tk.Button(self, text="Delete", command=self.delete_doc)
+        create_doc_button = tk.Button(self, text="Create A \n New Document ",
+                                      fg="red", command=lambda: self.create_new_doc())
         # create_doc_button.config(height=10, width=10);
-        process_complaints_button = tk.Button(self,
-                            text="Process Complaints")  # command=lambda:
+        process_complaints_button = tk.Button(self, text="Process Complaints")  # command=lambda:
         # TODO:NEED TO SHOW THE COMPLAINTS THE USER RECEIVED
-        manage_invite_button = tk.Button(self,
-                            text="Manage Invitations")  # command=lambda:NEED TO CHECK FROM BACKEND IF ANYONE INVITED
-        logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
+        manage_invite_button = tk.Button(self, text="Manage Invitations")  # command=lambda:NEED TO CHECK FROM BACKEND IF ANYONE INVITED
+        logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.log_out())
 
         search_field = tk.Entry(self)
-
 
         user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get()))
         document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_document(search_field.get()))
@@ -36,13 +34,26 @@ class OrdinaryUser(Guest):
         process_complaints_button.place(x=n + 300, y=m * 9.5)
         manage_invite_button.place(x=n + 300, y=m * 10)
         logout_button.place(x=n + 380, y=m - 20)
+        get_all_docs_button.place(x=n-125, y=m*5-35)
+        get_own_docs_button.place(x=n-125, y=m*5-15)
+        get_shared_docs_button.place(x=n-125, y=m*5+5)
 
 
-        search_field.place(x=n-50, y=m*4.75)
+        search_field.place(x=n+50, y=m*4.75)
+        user_search_button.place(x=n+240, y=m*4.5)
+        document_search_button.place(x=n+240, y=m*5)
 
-        user_search_button.place(x=n+140, y=m*4.5)
-        document_search_button.place(x=n+140, y=m*5)
+    def fetch_own_docs(self):
+        docs = DocumentsManager.get_own_docs(self.userid)
+        self.refresh_doc_section(docs)
 
+    def fetch_shared_docs(self):
+        docs = DocumentsManager.get_shared_docs_for_ou(self.userid)
+        self.refresh_doc_section(docs)
+
+    def fetch_all_docs(self):
+        docs = DocumentsManager.get_all_docs()
+        self.refresh_doc_section(docs)
 
     def create_new_doc(self):
         box = self.dialog_box()  # create the dialog box to ask for title and scope for creating doc
@@ -57,7 +68,7 @@ class OrdinaryUser(Guest):
 
     def delete_doc(self):
         if self.selected_docid:
-            if DocumentsManager.is_owner(self.userid, self.selected_docid):
+            if DocumentsManager.is_owner(self.userid, self.selected_docid) or self.controller.is_su(): # SU can delete any doc
                 msg_box = tk.messagebox.askquestion("Delete a document",
                                                     "Are you sure you want to delete this document?",
                                                     icon="warning")
@@ -71,9 +82,11 @@ class OrdinaryUser(Guest):
 
     def search_user(self, result):
         user_box=self.display_user_box(result)
+        # TODO: can search by name or technical interest
 
     def search_document(self, result):
         user_box=self.display_document_box(result)
+        # TODO: search own docs by partial keywords
 
 
     class dialog_box(tk.Toplevel):

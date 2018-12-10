@@ -16,7 +16,7 @@ class DocumentEditorPage(DocumentViewerPage):
         update_button = tk.Button(self, text="Update", command=self.update_doc)
         lock_button = tk.Button(self, text="Lock", command=self.lock_doc)
         unlock_button = tk.Button(self, text="Unlock", command=self.unlock_doc)
-        logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.show_frame("MainPage"))
+        logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.log_out())
 
         n = 150
         m = 50
@@ -27,9 +27,9 @@ class DocumentEditorPage(DocumentViewerPage):
         logout_button.place(x=n + 380, y=m - 20)
         speech_recognition_button.place(x=n - 120, y=m * 10 + 20)
 
-        # Check taboo words in title if document was just created
-        if self.doc_info['current_seq_id'] == '-':
-            self.update_check()
+        # # Check taboo words in title if document was just created
+        # if self.doc_info['current_seq_id'] == '-':
+        #     self.update_check()
 
     def speech_recognition(self):
         r = sr.Recognizer()
@@ -48,18 +48,19 @@ class DocumentEditorPage(DocumentViewerPage):
     def lock_doc(self):
         if DocumentsManager.lock_doc(self.userid, self.docid):
             tk.messagebox.showinfo("", "You have successfully locked the document!")
-            self.display_content()
+            self.fetch_status()
         else:
             tk.messagebox.showerror("", "Fail to lock the document because it's been locked!")
 
     def unlock_doc(self):
-        if DocumentsManager.unlock_doc(self.userid, self.docid):
+        if DocumentsManager.unlock_doc(self.userid, self.docid, self.controller.is_su()):
             tk.messagebox.showinfo("", "You have successfully unlocked the document!")
-            self.display_content()
+            self.fetch_status()
         else:
             tk.messagebox.showerror("", "You cannot unlock a document unless you have locked it first!")
 
     def update_doc(self):
+        # TODO: might need to prevent saving UNK into db, instead we want the original words to be saved
         if DocumentsManager.is_locker(self.userid, self.docid):
             updated_content = {
                 'title': self.title.get(1.0, 'end-1c'),
@@ -68,7 +69,7 @@ class DocumentEditorPage(DocumentViewerPage):
             DocumentsManager.update_doc(self.userid, self.docid, updated_content)
             # tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
             self.update_check()
-            self.display_content()
+            self.refresh_content()
         else:
             tk.messagebox.showerror("", "Fail to update the document because you did not lock the document.")
 
@@ -89,6 +90,6 @@ class DocumentEditorPage(DocumentViewerPage):
             # add user to warning list
             AccountsManager.add_warning(self.userid, self.docid)
             tk.messagebox.showwarning("", "Updated sucessfully. Following taboo words were used: {}.\nPlease fix them ASAP!".format(taboo_used))
-        elif self.doc_info['current_seq_id'] != '-':
+        else: #if self.doc_info['current_seq_id'] != '-':
             tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
 

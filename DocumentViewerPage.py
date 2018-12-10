@@ -42,23 +42,15 @@ class DocumentViewerPage(tk.Frame):
         self.content = tk.Text(self, height=25, width=60, highlightbackground="black", highlightcolor="black",
                             highlightthickness=1, )
 
-        OPTIONS = [
-            "Version 3",
-            "Version 2",
-            "Version 1"
-        ]  # etc
-        variable = tk.StringVar(self)
-        variable.set("Old versions")
-
-        # DROP DOWN
-        ##REFRENE FOR DROP DOWN
-        '''https://stackoverflow.com/questions/45441885/python-tkinter-creating-a-dropdown-select-bar-from-a-list/45442534'''
-        # need to be replaced by the bakend data
-        versions_drop_down = tk.OptionMenu(self, variable, *OPTIONS)
+        # For version history drop down
+        self.version_var = tk.StringVar(self)
+        self.selected_version = ''
+        self.doc_versions_list = []
+        self.versions_drop_down = tk.OptionMenu(self, self.version_var, None)
 
         complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
-        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else controller.show_frame(
-            controller.get_usertype()))  # jump back to user page
+        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())#controller.show_frame(
+            #controller.get_usertype()))  # jump back to user page
 
         n = 150
         m = 50
@@ -69,7 +61,7 @@ class DocumentViewerPage(tk.Frame):
         self.title.place(x=n - 120, y=m + 30)
         label_content.place(x=n - 120, y=m + 70)
         self.content.place(x=n - 120, y=m + 90)
-        versions_drop_down.place(x=n + 325, y=m + 20)
+        self.versions_drop_down.place(x=n + 325, y=m + 20)
 
         complain_button.place(x=n + 325, y=m * 7)
         back_button.place(x=n + 325, y=m * 8)
@@ -79,19 +71,23 @@ class DocumentViewerPage(tk.Frame):
         owner_label.place(x=n + 160, y=m + 70)
 
         #display doc info
-        self.display_content()
+        self.refresh_content()
 
-
-    def display_content(self):
-        # Can use this function to refresh content
-        self.doc_info = DocumentsManager.get_doc_info(self.docid)
-        self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
+    def fetch_title_and_content(self):
         # delete old content and insert new content
-        self.title.delete(1.0, tk.END)
-        self.title.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['title'], ' '))
+        self.doc_info = DocumentsManager.get_doc_info(self.docid)
         if self.doc_info['current_seq_id'] != '-':
+            self.title.delete(1.0, tk.END)
+            self.title.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['title'], ' '))
             self.content.delete(1.0, tk.END)
             self.content.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['content'], '\n'))
+        else:
+            # do not filter the initial title upon creating new doc
+            self.title.delete(1.0, tk.END)
+            self.title.insert(tk.INSERT, self.doc_info['title'])
+
+    def fetch_status(self):
+        self.doc_info = DocumentsManager.get_doc_info(self.docid)
         # update lock status
         if self.doc_info['is_locked'] == False:
             self.lock_status_var.set("Document is unlocked")
@@ -105,7 +101,49 @@ class DocumentViewerPage(tk.Frame):
             "Last modified by {} at {}".format(AccountsManager.get_username(int(self.doc_info['modified_by'])),
                                                self.doc_info['modified_at'])
         )
-        ## TODO: display doc old versions
+
+    def fetch_old_versions(self):
+        # TODO: need to try with more example, currently works with docid = 37 (with editing commands in versions db)
+        self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
+
+        if self.doc_info['current_seq_id'] != '-':
+            current_seq_id = self.doc_info['current_seq_id']
+            self.doc_versions_list = ['Version {}'.format(current_seq_id.split('-')[1])]
+            self.selected_version = self.doc_versions_list[0]
+            self.version_var.set(self.doc_versions_list[0]) # initial selected version is current version
+
+        if not self.doc_versions.empty:
+            print(self.doc_versions)
+            for seq_id, row in self.doc_versions.iterrows():
+                self.doc_versions_list.append('Version {}'.format(seq_id.split('-')[1]))
+            print(self.doc_versions_list)
+        self.versions_drop_down['menu'].delete(0, tk.END)
+        for version in self.doc_versions_list:
+            self.versions_drop_down['menu'].add_command(label=version,
+                                                        command=lambda value=version: self.version_selected(value))
+
+
+    def refresh_content(self):
+        # Can use this function to refresh content
+        self.fetch_title_and_content()
+        self.fetch_status()
+        self.fetch_old_versions()
+
+
+    def version_selected(self, value):
+        # retrieve selected version:
+        self.version_var.set(value)
+        self.selected_version = value
+        print(value)
+        selected_seq_id = '{}-{}'.format(self.docid, value.split()[1])
+        print(selected_seq_id)
+        self.content.delete(1.0, tk.END)
+        # if selected version is current version then display current content
+        if selected_seq_id == self.doc_info['current_seq_id']:
+            self.content.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['content'], '\n'))
+        else:
+            old_version_content = DocumentsManager.retrieve_old_version(selected_seq_id)
+            self.content.insert(tk.INSERT, self.filter_taboo_words(old_version_content, '\n'))
 
 
     def filter_taboo_words(self, content, separator):
