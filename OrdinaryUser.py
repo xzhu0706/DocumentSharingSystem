@@ -126,12 +126,17 @@ class OrdinaryUser(Guest):
             # setting the title for the listbox
             username_list.insert(tk.END,"Users")
             # lopping through the names of usernames
-            for names in user_list:
+            for names in range(0,len(user_list)):
                 # check if text in search bar has anything from the name in the database
-                if self.user_result in names:
-                    username_list.insert(tk.END,names)
+                if self.user_result in user_list[names]:
+                    username_list.insert(tk.END,user_list[names])
                     # kepping track of the indexes added to add the corresponding technical interests
-                    index_list.append(user_list.index(names))
+                    index_list.append(names)
+                if self.user_result in technical_list[names]:
+                    username_list.insert(tk.END,user_list[names])
+                    # kepping track of the indexes added to add the corresponding technical interests
+                    index_list.append(names)
+
 
             # make a list box for technical interest
             technicalinterest_list=tk.Listbox(self,height=10)
@@ -192,7 +197,8 @@ class OrdinaryUser(Guest):
         if(counter==0):
 
             tk.messagebox.showerror("Error","No Such Document found")
-        return (list_with_docid)
+
+        return(list_with_docid)
 
 
 
