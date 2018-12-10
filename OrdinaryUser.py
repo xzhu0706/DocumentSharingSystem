@@ -29,7 +29,7 @@ class OrdinaryUser(Guest):
 
 
         user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get()))
-        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_document(search_field.get()))
+        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_for_document(search_field.get()))
 
         # PLACING THE LABELS
         n = 150
@@ -60,8 +60,7 @@ class OrdinaryUser(Guest):
     def search_user(self,result):
         user_box=self.display_user_box(result)
 
-    def search_document(self,result):
-        user_box=self.display_document_box(result)
+    #user_box=self.display_document_box(result)
 
 
     class dialog_box(tk.Toplevel):
@@ -159,48 +158,42 @@ class OrdinaryUser(Guest):
                 tk.messagebox.showerror("Error","No Such User found")
 
     # thie class pops the dialogue box for the documents
-    class display_document_box(tk.Toplevel):
+    def search_for_document(self,document_result):
+        list_with_docid=[]
+        index_list=[]
+        #reading the file for Document database
+        document_db=pd.read_csv("database/Documents.csv")
+        # list that stores all the user names
 
-        def __init__(self,document_result):
-            tk.Toplevel.__init__(self)
-            # this is passed as keyword in the text field of the search bar
-            self.document_result=document_result
-            self.title("Document Search Results")
-
-            #reading the file for Document database
-            document_db=pd.read_csv("database/Documents.csv")
-
-            # list that stores all the user names
-            document_list=list(document_db['title'])
+        document_list=list(document_db['title'].loc[document_db['owner_id']==self.userid])
+        document_content_list=list(document_db['content'].loc[document_db['owner_id']==self.userid])
+        document_id_list=list(document_db['doc_id'].loc[document_db['owner_id']==self.userid])
 
 
-            # make a list box
-            document_listbox=tk.Listbox(self,height=10)
-            # lopping through the document's title
-            counter=0
-            for documents in document_list:
-                # check the document that match keywords entered in the search bar
-                if self.document_result in documents:
-                    document_listbox.insert(tk.END,documents)
-                    counter=counter+1
+        counter=0
+        for iz in range(0, len(document_list)):
 
-            # cancel button to go back to the main page
-            cancel_button=tk.Button(self,text="Cancel",command=self.destroy)
-            # open button to open th document
-            open_button=tk.Button(self,text="Open")#,command=self.destroy)#,command=lambda:mylistbox.get(ACTIVE))
+            # check the document that match keywords entered in the search bar
+            if str(document_result) in str(document_list[iz]):
+
+                index_list.append(iz)
+                counter=counter+1
+            elif str(document_result) in str(document_content_list[iz]):
+                index_list.append(iz)
+                counter=counter+1
+        for jz in index_list:
+            list_with_docid.append(document_id_list[jz])
 
 
-            # setting up the layout of the dialog box
-            document_listbox.grid(row=0,column=0)
-            cancel_button.grid(row=1,column=0)
-            open_button.grid(row=1,column=1)
 
-            # this is the case when there is no match which simply destroys the box
-            # then prints an error messagebox in the screen
-            # as counter is updated when a match is found it being 0 confrims no match
-            if(counter==0):
-                self.destroy()
-                tk.messagebox.showerror("Error","No Such Document found")
+        # this is the case when there is no match which simply destroys the box
+        # then prints an error messagebox in the screen
+        # as counter is updated when a match is found it being 0 confrims no match
+        if(counter==0):
+
+            tk.messagebox.showerror("Error","No Such Document found")
+        return (list_with_docid)
+
 
 
 
