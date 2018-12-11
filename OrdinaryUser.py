@@ -61,7 +61,7 @@ class OrdinaryUser(Guest):
         title = box.init_info['title']
         scope = box.init_info['scope']
         if title and scope:
-            new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, title) # get new_doc_id
+            new_doc_id = DocumentsManager.create_new_doc(self.userid, scope, str(title)) # get new_doc_id
             self.controller.opened_docid = new_doc_id  # set currently opened doc_id
             self.controller.create_doc_owner_page()    # create new doc_owner_page
             self.controller.show_frame("DocumentOwnerPage")  # display page
@@ -83,24 +83,46 @@ class OrdinaryUser(Guest):
     def search_doc(self, document_result):
         # this function returns a list of doc id that contains key words from search field
         list_with_docid = []
-        index_list = []
-        document_db = DocumentsManager.get_all_docs()
+        # index_list = []
 
-        document_title_list = list(document_db['title'].loc[document_db['owner_id'] == self.userid])
-        document_content_list = list(document_db['content'].loc[document_db['owner_id'] == self.userid])
-        document_id_list = list(document_db['doc_id'].loc[document_db['owner_id'] == self.userid])
+        document_db = pd.read_csv("database/Documents.csv")
+
+        docs = DocumentsManager.get_own_docs(self.userid)
+
+        title_list = list(docs['title'])
+        content_list = list(docs['content'])
+        docid_list = list(docs.index)
+
+        # document_title_list = list(document_db['title'].loc[document_db['owner_id'] == self.userid])
+        # document_content_list = list(document_db['content'].loc[document_db['owner_id'] == self.userid])
+        # document_id_list = list(document_db['doc_id'].loc[document_db['owner_id'] == self.userid])
+        #
+        # print(document_title_list)
+        # print(title_list)
+        # print(document_content_list)
+        # print(content_list)
+        # print(document_id_list)
+        # print(docid_list)
 
         counter = 0
-        for iz in range(0, len(document_title_list)):
+        for iz in range(0, len(title_list)):
             # check the document that match keywords entered in the search bar
-            if str(document_result) in str(document_title_list[iz]):
-                index_list.append(iz)
+            if str(document_result) in str(title_list[iz]):
+                list_with_docid.append(docid_list[iz])
                 counter += 1
-            elif str(document_result) in str(document_content_list[iz]):
-                index_list.append(iz)
+            elif str(document_result) in str(content_list[iz]):
+                list_with_docid.append(docid_list[iz])
                 counter += 1
-        for jz in index_list:
-            list_with_docid.append(document_id_list[jz])
+
+        # counter = 0
+        # for iz in range(0, len(document_title_list)):
+        #     # check the document that match keywords entered in the search bar
+        #     if str(document_result) in str(document_title_list[iz]):
+        #         list_with_docid.append(document_id_list[iz])
+        #         counter += 1
+        #     elif str(document_result) in str(document_content_list[iz]):
+        #         list_with_docid.append(document_id_list[iz])
+        #         counter += 1
 
         # this is the case when there is no match which simply destroys the box
         # then prints an error message box in the screen
@@ -109,7 +131,16 @@ class OrdinaryUser(Guest):
             tk.messagebox.showerror("Error", "No Such Document found")
 
         print(list_with_docid)
+        self.display_search_doc_results(list_with_docid)
         return list_with_docid
+
+    def display_search_doc_results(self, docid_list):
+        docs_df = pd.DataFrame()
+        for docid in docid_list:
+            print(docid)
+            print(DocumentsManager.get_doc_info(docid).to_frame().transpose())
+            docs_df = docs_df.append(DocumentsManager.get_doc_info(docid).to_frame().transpose())
+        self.refresh_doc_section(docs_df)
 
     def search_user(self, result):
         self.SearchResultBox(result)

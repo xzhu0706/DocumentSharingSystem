@@ -48,10 +48,9 @@ class DocumentViewerPage(tk.Frame):
         self.doc_versions_list = []
         self.versions_drop_down = tk.OptionMenu(self, self.version_var, None)
 
-        # TODO: need function and GUI
+        # TODO: need function and GUI for complaints
         complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
-        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())#controller.show_frame(
-            #controller.get_usertype()))  # jump back to user page
+        back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())
 
         n = 150
         m = 50
@@ -79,9 +78,9 @@ class DocumentViewerPage(tk.Frame):
         self.doc_info = DocumentsManager.get_doc_info(self.docid)
         if self.doc_info['current_seq_id'] != '-':
             self.title.delete(1.0, tk.END)
-            self.title.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['title'], ' '))
+            self.title.insert(tk.INSERT, self.filter_taboo_words(str(self.doc_info['title']), ' '))
             self.content.delete(1.0, tk.END)
-            self.content.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['content'], '\n'))
+            self.content.insert(tk.INSERT, self.filter_taboo_words(str(self.doc_info['content']), '\n'))
         else:
             # do not filter the initial title upon creating new doc
             self.title.delete(1.0, tk.END)
@@ -123,13 +122,11 @@ class DocumentViewerPage(tk.Frame):
             self.versions_drop_down['menu'].add_command(label=version,
                                                         command=lambda value=version: self.version_selected(value))
 
-
     def refresh_content(self):
         # Can use this function to refresh content
         self.fetch_title_and_content()
         self.fetch_status()
         self.fetch_old_versions()
-
 
     def version_selected(self, value):
         # retrieve selected version:

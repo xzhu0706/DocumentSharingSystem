@@ -108,6 +108,7 @@ class Guest(tk.Frame):
         self.refresh_doc_section(docs)
 
     def refresh_doc_section(self, docs):
+        '''Input docs should be a dataframe, this function refresh content in docs_section treeview'''
         docs_tuple_list = []
         if not docs.empty:
             for docid, row in docs.iterrows():
@@ -124,10 +125,10 @@ class Guest(tk.Frame):
             self.docs_section.insert('', tk.END, iid=new_doc[0], values=new_doc)
 
     def taboo_words_suggested(self):
-        box = self.taboo_box()
-        self.wait_window(box)
+        box = self.TabooBox()
+        # self.wait_window(box)
 
-    class taboo_box(tk.Toplevel):
+    class TabooBox(tk.Toplevel):
 
         def __init__(self):
             tk.Toplevel.__init__(self)
