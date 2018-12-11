@@ -64,9 +64,12 @@ class DocumentEditorPage(DocumentViewerPage):
                 'title': self.title.get(1.0, 'end-1c'),
                 'content': self.content.get(1.0, 'end-1c')
             }
-            DocumentsManager.update_doc(self.userid, self.docid, updated_content)
-            # tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
-            self.update_check()
+            if self.controller.is_warned:
+                if self.update_check_for_warned_user():
+                    DocumentsManager.update_doc(self.userid, self.docid, updated_content)
+            else:
+                self.update_check()
+                DocumentsManager.update_doc(self.userid, self.docid, updated_content)
             self.refresh_content()
         else:
             tk.messagebox.showerror("", "Fail to update the document because you did not lock the document.")
@@ -88,6 +91,21 @@ class DocumentEditorPage(DocumentViewerPage):
             # add user to warning list
             AccountsManager.add_warning(self.userid, self.docid)
             tk.messagebox.showwarning("", "Updated sucessfully. Following taboo words were used: {}.\nPlease fix them ASAP!".format(taboo_used))
-        else: #if self.doc_info['current_seq_id'] != '-':
+            return False
+        else:
             tk.messagebox.showinfo("", "You have successfully updated the document! Please unlock if you are done.")
+            return True
+
+    def update_check_for_warned_user(self):
+        words_used = self.title.get(1.0, tk.END).split()
+        content_words = self.content.get(1.0, tk.END).split('\n')
+        words_used.extend(content_words)
+        for word in words_used:
+            if word == 'UNK':
+                tk.messagebox.showwarning("", "Your document still contains taboo words! Update failed.")
+                return False
+        if self.update_check():
+            self.controller.remove_warning()
+            return True
+
 

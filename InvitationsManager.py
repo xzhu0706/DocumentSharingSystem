@@ -4,16 +4,7 @@ import pandas as pd
 import DocumentsManager
 import AccountsManager
 
-path_to_documents_db = "database/Documents.csv"
-path_to_document_versions_db = "database/DocumentVersions.csv"
 path_to_invitations_db = "database/Invitations.csv"
-path_to_complaints_db = "database/Complaints.csv"
-path_to_contributors_db = "database/contributors.csv"
-path_to_taboo_words_db = "database/TabooWords.csv"
-path_to_user_infos_db = "database/UserInfos.csv"
-path_to_warning_list_db = "database/WarningList.csv"
-path_to_locker_db = "database/Locker.csv"
-path_to_accts_applications_db = "database/PendingApplications.csv"
 
 def send_invitation(invitee_id, docid):
     '''This function records an invitation in db'''

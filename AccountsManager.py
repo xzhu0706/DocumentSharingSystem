@@ -4,14 +4,8 @@ import pandas as pd
 import DocumentsManager
 
 path_to_documents_db = "database/Documents.csv"
-path_to_document_versions_db = "database/DocumentVersions.csv"
-path_to_invitations_db = "database/Invitations.csv"
-path_to_complaints_db = "database/Complaints.csv"
-path_to_contributors_db = "database/contributors.csv"
-path_to_taboo_words_db = "database/TabooWords.csv"
 path_to_user_infos_db = "database/UserInfos.csv"
 path_to_warning_list_db = "database/WarningList.csv"
-path_to_locker_db = "database/Locker.csv"
 path_to_accts_applications_db = "database/PendingApplications.csv"
 
 
@@ -28,6 +22,13 @@ def get_all_users_id_name():
     for id, user_info in user_infos_db.iterrows():
         user_infos_dict[id] = user_info['username']
     return user_infos_dict
+
+
+def get_all_super_users():
+    '''This function returns a list of all super users' userid'''
+    user_infos_db = pd.read_csv(path_to_user_infos_db, index_col=0)
+    super_users = user_infos_db.loc[user_infos_db['usertype'] == 'SuperUser']
+    return super_users.index.tolist()
 
 
 def get_user_info(userid):
@@ -69,6 +70,14 @@ def add_warning(userid, docid):
     })
     with open(path_to_warning_list_db, 'a') as warning_list_db:
         df.to_csv(warning_list_db, index=False, header=False)
+
+
+def remove_warning(userid):
+    '''This function deletes the warning from database'''
+    warning_list = pd.read_csv("database/WarningList.csv")
+    index = warning_list.loc[warning_list['user_id'] == userid].index[0]
+    warning_list.drop(index=index, inplace=True)
+    warning_list.to_csv("database/WarningList.csv", index=False)
 
 
 def is_pending(username):
@@ -143,7 +152,6 @@ def remove_pending_user(username):
     accts_applications_db.to_csv(path_to_accts_applications_db)
 
 
-
 def main():
     ## Testing code here
     userid = 2
@@ -160,8 +168,7 @@ def main():
     # })
 
     # remove_pending_user('fdf')
-
-
+    get_all_super_users()
 
 if __name__ == "__main__":
     main()

@@ -120,6 +120,12 @@ class Application(tk.Tk):
                                     "document named \"{}\" contains taboo words!"
                                     "Please fix it before you conduct any other activity.".format(self.bad_doc_title))
 
+    def remove_warning(self):
+        AccountsManager.remove_warning(self.__userid)
+        self.is_warned = False
+        self.bad_docid = 0
+        self.bad_doc_title = ''
+
     def get_username(self):
         return self.__username
 

@@ -5,18 +5,16 @@ import time
 import numpy as np
 import AccountsManager
 import InvitationsManager
+import EditingCommands
 
 pd.set_option('display.expand_frame_repr', False)
 
 path_to_documents_db = "database/Documents.csv"
 path_to_document_versions_db = "database/DocumentVersions.csv"
-path_to_invitations_db = "database/Invitations.csv"
-path_to_complaints_db = "database/Complaints.csv"
 path_to_contributors_db = "database/contributors.csv"
-path_to_taboo_words_db = "database/TabooWords.csv"
 path_to_user_infos_db = "database/UserInfos.csv"
-path_to_warning_list_db = "database/WarningList.csv"
 path_to_locker_db = "database/Locker.csv"
+path_to_warning_list_db = "database/WarningList.csv"
 
 #
 # different users should have their own page populated by his/her picture and 3 most recent documents.
@@ -117,7 +115,11 @@ def is_viewer(docid):
 def is_contributor(userid, docid, is_su):
     '''This function returns boolean value of whether user is a contributor of doc'''
     contributors_db = pd.read_csv(path_to_contributors_db)
-    if is_su or get_scope(docid) == 'Restricted':
+    if get_scope(docid) == 'Restricted':
+        return True
+    if is_su:
+        if get_scope(docid) == 'Private':
+            return False
         return True
     contributors_df = contributors_db.loc[contributors_db['doc_id'] == docid]
     if not contributors_df.empty:
@@ -284,7 +286,7 @@ def store_old_version(old_version, based_on_seq_id, based_on_content):
         'seq_id': [old_version['current_seq_id']],
         'doc_id': [based_on_seq_id.split('-')[0]],
         'based_on_seq_id': [based_on_seq_id],
-        'editing_commands': ['TODO'],  # TODO: need function to calculate the commands
+        'editing_commands': [EditingCommands.cal_editing_commands(old_version['content'], based_on_content['content'])],  # TODO: need function to calculate the commands
         'modified_by': [old_version['modified_by']],
         'modified_at': [old_version['modified_at']]
     })
@@ -355,6 +357,22 @@ def get_contributors(docid):
     return contributors_df['contributor_id'].tolist()
 
 
+def get_old_version_info(seq_id):
+    '''This function returns the series of version info '''
+    docs_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
+    return docs_versions_db.loc[seq_id]
+
+
+def is_current_version(seq_id):
+    '''This function returns the boolean value of whether the seq_id is current version of the doc'''
+    try:
+        versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
+        version = versions_db.loc[seq_id]
+        return False
+    except KeyError or IndexError:
+        return True
+
+
 def retrieve_old_version(seq_id):
     '''This function returns the content of given seq_id'''
     doc_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
@@ -369,21 +387,17 @@ def retrieve_old_version(seq_id):
             based_on_seq_id = ver['based_on_seq_id']
     except KeyError:  # when catch an error means we reach the current version, read current content from docs db
         curr_ver = docs_db.loc[int(based_on_seq_id.split('-')[0])]
-        based_on_content = curr_ver['content'].split('\n')
-    edit_commands = edit_commands_sequence.split(';')  # split to list
-    # Three types of commands:
-    # add nth word
-    # delete nth
-    # update nth word
-    for command in edit_commands:
-        op = command.split()
-        if op[0] == 'add':
-            based_on_content.insert(int(op[1]), op[2])
-        elif op[0] == 'delete':
-            based_on_content.pop(int(op[1]))
-        elif op[0] == 'update':
-            based_on_content[int(op[1])] = op[2]
-    return '\n'.join(based_on_content)
+        based_on_content = curr_ver['content']
+
+    print('commands are', edit_commands_sequence)
+    print('based on content is', based_on_content)
+    new_content_list = EditingCommands.editing_commands_to_content(edit_commands_sequence, based_on_content)
+    print('new content is', new_content_list)
+    new_content = ''
+    for word in new_content_list:
+        if word != '*':
+            new_content += word + '\n'
+    return new_content
 
 
 def main():

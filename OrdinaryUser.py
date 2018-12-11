@@ -14,16 +14,14 @@ class OrdinaryUser(Guest):
         create_doc_button = tk.Button(self, text="Create A \n New Document ",
                                       fg="red", command=lambda: self.create_new_doc())
         # create_doc_button.config(height=10, width=10);
-        process_complaints_button = tk.Button(self, text="Process Complaints")  # command=lambda:
-        # TODO:NEED TO SHOW THE COMPLAINTS THE USER RECEIVED
+        process_complaints_button = tk.Button(self, text="Process Complaints", command=lambda: self.ProcessComplaintsBox(self.userid))
         manage_invite_button = tk.Button(self, text="Manage Invitations", command=self.manage_invitations)
-        # TODO: need to show the inivitations received
         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.log_out())
 
         search_field = tk.Entry(self)
 
-        user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get()))
-        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_doc(search_field.get()))
+        user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get().lower()))
+        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_doc(search_field.get().lower()))
 
         # PLACING THE LABELS
         n = 150
@@ -118,6 +116,138 @@ class OrdinaryUser(Guest):
     def manage_invitations(self):
         self.ManageInvitationsBox(self.userid)
 
+    class ProcessComplaintsBox(tk.Toplevel):
+        # This class is a pop up box taht let user to see complaints they received
+        def __init__(self, userid):
+            tk.Toplevel.__init__(self)
+
+            self.title("Process Complaints")
+
+            self.userid = userid
+
+            self.selected_complaint = ''
+
+            self.complaints_section = ttk.Treeview(self, height=6, show=['headings'],
+                                                   columns=['id', 'complainer', 'complainee', 'doc_title', 'version', 'processed'])
+            self.complaints_section.heading('id', text='id', anchor=tk.CENTER)
+            self.complaints_section.heading('complainer', text='Complainer', anchor=tk.CENTER)
+            self.complaints_section.heading('complainee', text='Complainee', anchor=tk.CENTER)
+            self.complaints_section.heading('doc_title', text='Document Title', anchor=tk.CENTER)
+            self.complaints_section.heading('version', text='Version Number', anchor=tk.CENTER)
+            self.complaints_section.heading('processed', text='Processed', anchor=tk.CENTER)
+            self.complaints_section.column('id', minwidth=20, width=40)
+            self.complaints_section.column('complainer', minwidth=20, width=100)
+            self.complaints_section.column('complainee', minwidth=20, width=100)
+            self.complaints_section.column('doc_title', minwidth=20, width=150)
+            self.complaints_section.column('version', minwidth=20, width=40)
+            self.complaints_section.column('processed', minwidth=20, width=70)
+
+            vsb = ttk.Scrollbar(self, orient="vertical", command=self.complaints_section.yview)
+            self.complaints_section.configure(yscrollcommand=vsb.set)
+            self.complaints_section.bind('<Button-1>', self.on_select_complaint)
+
+            self.complaint_content_section = tk.Text(self, height=3, width=60,
+                                                     highlightbackground="black", highlightcolor="black",
+                                                     highlightthickness=1)
+            self.doc_content_section = tk.Text(self, height=20, width=60, highlightbackground="black", highlightcolor="black",
+                                               highlightthickness=1)
+
+            all_complaints_button = tk.Button(self, text="All Complaints", command=self.show_all_complaints)
+            unprocessed_button = tk.Button(self, text="Unprocessed Complaints", command=self.show_unprocessed)
+            process_button = tk.Button(self, text="Mark as Processed", command=self.mark_as_processed)
+            delete_button = tk.Button(self, text="Delete", command=self.delete_complaint)
+            back_button = tk.Button(self, text="Back", command=self.destroy)
+
+            complaint_label = tk.Label(self, text="Complaint: ")
+            doc_content_label = tk.Label(self, text="Document Content: ")
+
+            complaint_label.grid(row=5, column=0)
+            doc_content_label.grid(row=6, column=0)
+            all_complaints_button.grid(row=0, column=1)
+            unprocessed_button.grid(row=1, column=1)
+            self.complaints_section.grid(row=2, column=1)
+            self.complaint_content_section.grid(row=5, column=1)
+            self.doc_content_section.grid(row=6, column=1)
+            process_button.grid(row=3, column=1)
+            delete_button.grid(row=4, column=1)
+            back_button.grid(row=4, column=2)
+
+            # populate complaints and content section
+            self.complaints_received = ComplaintsManager.get_complaints_received(userid)
+            self.unprocessed = ComplaintsManager.get_unprocessed_complaints(userid)
+            if not self.complaints_received.empty:
+                for complaint_id, row in self.complaints_received.iterrows():
+                    if row['complainer_id'] == 0:
+                        complainer_name = 'Guest'
+                    else:
+                        complainer_name = AccountsManager.get_username(row['complainer_id']),
+
+                    info_tuple = (
+                        complaint_id,
+                        complainer_name,
+                        AccountsManager.get_username(row['complainee_id']),
+                        DocumentsManager.get_doc_info(int(row['seq_id'].split('-')[0])),
+                        int(row['seq_id'].split('-')[1]),
+                        row['processed']
+                    )
+                    self.complaints_section.insert('', tk.END, iid=complaint_id, values=info_tuple)
+
+        def on_select_complaint(self, event):
+            selected_complaint = int(self.complaints_section.identify_row(event.y))
+            if selected_complaint is not None:
+                self.selected_complaint = selected_complaint
+                selected_complaint_seq_id = self.complaints_received.loc[self.selected_complaint]['seq_id']
+                if DocumentsManager.is_current_version(selected_complaint_seq_id):
+                    doc_content = DocumentsManager.get_doc_info(int(selected_complaint_seq_id.split('-')[0]))['content']
+                else:
+                    doc_content = DocumentsManager.retrieve_old_version(selected_complaint_seq_id)
+                self.refresh_doc_content_section(doc_content)
+                self.refresh_complaint_content_section(self.complaints_received.loc[selected_complaint]['content'])
+
+        def refresh_complaint_content_section(self, content):
+            self.complaint_content_section.delete(1.0, tk.END)
+            self.complaint_content_section.insert(tk.INSERT, content)
+
+        def refresh_doc_content_section(self, content):
+            self.doc_content_section.delete(1.0, tk.END)
+            self.doc_content_section.insert(tk.INSERT, content)
+
+        def show_complaints(self, complaints_df):
+            for complaint in self.complaints_section.get_children():
+                self.complaints_section.delete(complaint)
+            if not complaints_df.empty:
+                for complaint_id, row in complaints_df.iterrows():
+                    if row['complainer_id'] == 0:
+                        complainer_name = 'Guest'
+                    else:
+                        complainer_name = AccountsManager.get_username(row['complainer_id']),
+
+                    info_tuple = (
+                        complaint_id,
+                        complainer_name,
+                        AccountsManager.get_username(row['complainee_id']),
+                        DocumentsManager.get_doc_info(int(row['seq_id'].split('-')[0])),
+                        int(row['seq_id'].split('-')[1]),
+                        row['processed']
+                    )
+                    self.complaints_section.insert('', tk.END, iid=complaint_id, values=info_tuple)
+
+
+        def show_all_complaints(self):
+            self.complaints_received = ComplaintsManager.get_complaints_received(self.userid)
+            self.show_complaints(self.complaints_received)
+
+        def show_unprocessed(self):
+            self.complaints_received = ComplaintsManager.get_unprocessed_complaints(self.userid)
+            self.show_complaints(self.unprocessed)
+
+        def delete_complaint(self):
+            self.complaints_section.delete(self.selected_complaint)
+            ComplaintsManager.remove_complaint(self.selected_complaint)
+
+        def mark_as_processed(self):
+            ComplaintsManager.mark_as_processed(self.selected_complaint)
+
     class ManageInvitationsBox(tk.Toplevel):
         # This class is a popup box that allows user to accept/reject invitations
 
@@ -161,7 +291,6 @@ class OrdinaryUser(Guest):
                         row['time']
                     )
                     self.invitations_section.insert('', tk.END, iid=row['doc_id'], values=info_tuple)
-
 
         def accept_invite(self):
             selected_invite_docid = int(self.invitations_section.selection()[0])
@@ -249,7 +378,7 @@ class OrdinaryUser(Guest):
                     username_list.insert(tk.END, user_list[names])
                     # keeping track of the indexes added to add the corresponding technical interests
                     index_list.append(names)
-                if self.user_result in technical_list[names]:
+                elif self.user_result in technical_list[names]:
                     username_list.insert(tk.END, user_list[names])
                     # keeping track of the indexes added to add the corresponding technical interests
                     index_list.append(names)

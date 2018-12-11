@@ -4,6 +4,8 @@ import pandas as pd
 import DocumentsManager
 import AccountsManager
 import InvitationsManager
+import ComplaintsManager
+from tkinter import simpledialog
 
 class DocumentViewerPage(tk.Frame):
 
@@ -49,8 +51,7 @@ class DocumentViewerPage(tk.Frame):
         self.doc_versions_list = []
         self.versions_drop_down = tk.OptionMenu(self, self.version_var, None)
 
-        # TODO: need function and GUI for complaints
-        complain_button = tk.Button(self, text="Complain")  # ,command=lambda:)
+        complain_button = tk.Button(self, text="Complain", command=self.complain_doc)
         back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())
 
         n = 150
@@ -133,17 +134,21 @@ class DocumentViewerPage(tk.Frame):
         # retrieve selected version:
         self.version_var.set(value)
         self.selected_version = value
-        print(value)
         selected_seq_id = '{}-{}'.format(self.docid, value.split()[1])
-        print(selected_seq_id)
         self.content.delete(1.0, tk.END)
         # if selected version is current version then display current content
         if selected_seq_id == self.doc_info['current_seq_id']:
             self.content.insert(tk.INSERT, self.filter_taboo_words(self.doc_info['content'], '\n'))
+            self.fetch_status()
         else:
             old_version_content = DocumentsManager.retrieve_old_version(selected_seq_id)
             self.content.insert(tk.INSERT, self.filter_taboo_words(old_version_content, '\n'))
-
+            old_version_info = DocumentsManager.get_old_version_info(selected_seq_id)
+            modifier = AccountsManager.get_username(old_version_info['modified_by'])
+            modified_time = old_version_info['modified_at']
+            self.last_modified_var.set(
+                "Last modified by {} at {}".format(modifier, modified_time)
+            )
 
     def filter_taboo_words(self, content, separator):
         '''separator is blank space if content is doc title
@@ -166,3 +171,61 @@ class DocumentViewerPage(tk.Frame):
         taboo_db = pd.read_csv("database/TabooWords.csv")
         taboo_list = taboo_db.loc[taboo_db['approved'] == True]['word'].tolist()
         return taboo_list
+
+    def complain_doc(self):
+        if self.doc_info['scope'] == 'Private' or DocumentsManager.is_owner(self.userid, self.docid):
+            tk.messagebox.showerror("", "You cannot complain your own document.")
+        elif self.controller.is_guest() or self.doc_info['scope'] == 'Public':
+            self.complain_to_su()
+        else:
+            answer = tk.messagebox.askyesno("", "Do you want to complain about this version to the owner?")
+            if answer:
+                self.complain_to_owner()
+            else:
+                answer = tk.messagebox.askyesno("", "Then do you want to complain about the owner to the Super User?")
+                if answer:
+                    self.complain_to_su()
+
+    def complain_to_owner(self):
+        if self.doc_info['current_seq_id'] == '-':
+            tk.messagebox.showerror("", "This is a new document. You cannot complain if there is no update.")
+            return
+        selected_seq_id = '{}-{}'.format(self.docid, self.selected_version.split()[1])
+        if self.doc_info['current_seq_id'] == selected_seq_id:
+            updater = self.doc_info['modified_by']
+        else:
+            updater = DocumentsManager.get_old_version_info(selected_seq_id)['modified_by']
+        complaint = tk.simpledialog.askstring("Complain to Owner", "Please enter your complaint about this version.\n"
+                                              "If this is not the version you want to complain about,\ngo back to the"
+                                              "document page and select the correct version.")
+        if complaint is not None:
+            complaint_info = {
+                'receiver_id': self.doc_info['owner_id'],
+                'complaint_type': 'to_owner',
+                'complainee_id': updater,
+                'seq_id': selected_seq_id,
+                'content': complaint
+            }
+            ComplaintsManager.add_complaint(self.userid, complaint_info)
+            tk.messagebox.showinfo("", "Your complaint has been sent to the owner.")
+
+
+    def complain_to_su(self):
+        selected_seq_id = '{}-{}'.format(self.docid, self.selected_version.split()[1])
+        complaint = tk.simpledialog.askstring("Complain to Super User", "Please enter your complaint about this document: ")
+        if complaint is not None:
+            super_users = AccountsManager.get_all_super_users()
+            for su in super_users:
+                complaint_info = {
+                    'receiver_id': su,
+                    'complaint_type': 'to_su',
+                    'complainee_id': DocumentsManager.get_doc_info(self.docid)['owner_id'],
+                    'seq_id': selected_seq_id,
+                    'content': complaint,
+                }
+                ComplaintsManager.add_complaint(self.userid, complaint_info)
+            tk.messagebox.showinfo("", "Your complaint has been recorded!")
+
+
+
+
