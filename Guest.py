@@ -76,13 +76,13 @@ class Guest(tk.Frame):
         def on_submit(self, taboo_words):
             taboo_db = pd.read_csv("database/TabooWords.csv", index_col=0)
             taboo_list=taboo_words.split()
-            new_word_id = len(taboo_db) + 1
+
             for i in taboo_list:
-                data=[[new_word_id,i,False]]
-                df = pd.DataFrame(data,columns=["word_id","word","approved"])
+                data=[[i,False]]
+                df = pd.DataFrame(data,columns=["word","approved"])
                 with open('database/TabooWords.csv', 'a') as taboo_db:
                     df.to_csv(taboo_db, index=False, header=False)
-                new_word_id=new_word_id+1
+                
             print("Information updated in the database")
             self.destroy()
 
