@@ -1,6 +1,6 @@
 doc_id,owner_id,current_seq_id,scope,is_locked,views_count,modified_by,modified_at,title,content
 15,2,-,Private,False,12,2,2018-12-07 21:45:45,vohiyo,
-16,1,16-1,Shared,False,27,3,2018-12-09 22:57:05,ohiyo,"hello
+16,1,16-1,Shared,False,31,3,2018-12-09 22:57:05,ohiyo,"hello
 world"
 18,2,-,Private,False,1,2,2018-12-07 22:14:14,yay, 
 19,2,19-1,Private,True,0,2,2018-12-07 22:14:57,bye,"bye
@@ -45,7 +45,7 @@ ha
 ya"
 42,2,42-2,Public,True,1,2,2018-12-09 19:04:52,hi yo,"hi
 yo"
-43,3,-,Shared,False,5,3,2018-12-09 19:08:04,ba ba, 
+43,3,-,Shared,False,6,3,2018-12-09 19:08:04,ba ba, 
 44,3,44-3,Restricted,True,9,3,2018-12-09 20:03:03,ya,"hello
 world
 ya
@@ -70,7 +70,7 @@ ma
 sdf
 sdf
 "
-55,1,55-2,Private,True,2,1,2018-12-09 19:53:42,yaas,"ja
+55,1,55-2,Public,True,3,1,2018-12-09 19:53:42,yaas,"ja
 na
 ba
 sa
@@ -86,4 +86,4 @@ f
 g"
 57,3,57-1,Restricted,True,8,3,2018-12-09 20:15:18,ja na,"haa
 fdg"
-58,1,-,Private,False,4,1,2018-12-09 20:15:51,ja, 
+58,1,-,Private,False,5,1,2018-12-09 20:15:51,ja, 

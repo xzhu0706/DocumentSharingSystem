@@ -390,6 +390,8 @@ def main():
     userid = 3
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     doc_versions_db = pd.read_csv(path_to_document_versions_db, index_col=0)
+    # send_invitation(2, 16)
+    #accept_invitation(4, 16)
 
 
 

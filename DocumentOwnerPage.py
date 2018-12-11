@@ -1,6 +1,7 @@
 from DocumentEditorPage import *
 import DocumentsManager
 import AccountsManager
+import InvitationsManager
 
 class DocumentOwnerPage(DocumentEditorPage):
 
@@ -29,6 +30,30 @@ class DocumentOwnerPage(DocumentEditorPage):
         set_scope_button.place(x=n+420, y=m+51)
         scopes_drop_down.place(x=n+325, y=m+50)
 
+    def manage_contributors(self):
+        if self.doc_info['scope'] != 'Shared':
+            tk.messagebox.showerror("", "You can only manage contributors if the document is Shared. Please"
+                                        "change the scope of document to Shared if you want to do so.")
+        else:
+            self.ManageContributorsBox(self.docid)
+
+    def set_scope(self):
+        current_scope = self.doc_info['scope']
+        new_scope = self.selected_scope_var.get()
+        if current_scope == 'Shared':
+            msg_box = tk.messagebox.askquestion("Change Scope",
+                                                "This is a Shared document. Are you sure you want to change the scope to {}? "
+                                                "If you do, all contributors of this document will be removed.".format(new_scope),
+                                                icon="warning")
+            if msg_box == 'yes':
+                DocumentsManager.set_scope(self.docid, new_scope)
+                DocumentsManager.remove_all_contributor(self.docid)
+                tk.messagebox.showinfo("", "Set scope successfully!")
+                self.fetch_status()
+            return
+        DocumentsManager.set_scope(self.docid, new_scope)
+        tk.messagebox.showinfo("", "Set scope successfully!")
+        self.fetch_status()
 
     class ManageContributorsBox(tk.Toplevel):
         # This class is a pop up box that let user to manage contributors
@@ -89,10 +114,14 @@ class DocumentOwnerPage(DocumentEditorPage):
                 tk.messagebox.showerror("", "The user is already a contributor!")
             elif DocumentsManager.is_owner(selected_user_id, self.docid):
                 tk.messagebox.showerror("", "You cannot add yourself to be the contributor!")
+            elif InvitationsManager.is_rejected(selected_user_id, self.docid):
+                tk.messagebox.showerror("", "{} has rejected your invitation!".format(selected_user_name))
+            elif InvitationsManager.is_invited(selected_user_id, self.docid):
+                tk.messagebox.showerror("", "You have already sent the invitation before!"
+                                            "Please wait for {} to accept it.".format(selected_user_name))
             else:
-                DocumentsManager.add_contributor(selected_user_id, self.docid)
-                self.contributor_id_list_in_index_order.append(selected_user_id)
-                self.contributors_list_box.insert(tk.END, selected_user_name)
+                InvitationsManager.send_invitation(selected_user_id, self.docid)
+                tk.messagebox.showinfo("", "Invitation has been sent to {}!".format(selected_user_name))
 
         def remove_contributor(self):
             selected_index = self.contributors_list_box.curselection()[0]
@@ -100,30 +129,3 @@ class DocumentOwnerPage(DocumentEditorPage):
             DocumentsManager.remove_contributor(selected_userid, self.docid)
             self.contributors_list_box.delete(selected_index)
             self.contributor_id_list_in_index_order.pop(selected_index)
-
-
-    def manage_contributors(self):
-        if self.doc_info['scope'] != 'Shared':
-            tk.messagebox.showerror("", "You can only manage contributors if the document is Shared. Please"
-                                        "change the scope of document to Shared if you want to do so.")
-        else:
-            self.ManageContributorsBox(self.docid)
-
-
-    def set_scope(self):
-        current_scope = self.doc_info['scope']
-        new_scope = self.selected_scope_var.get()
-        if current_scope == 'Shared':
-            msg_box = tk.messagebox.askquestion("Change Scope",
-                                                "This is a Shared document. Are you sure you want to change the scope to {}? "
-                                                "If you do, all contributors of this document will be removed.".format(new_scope),
-                                                icon="warning")
-            if msg_box == 'yes':
-                DocumentsManager.set_scope(self.docid, new_scope)
-                DocumentsManager.remove_all_contributor(self.docid)
-                tk.messagebox.showinfo("", "Set scope successfully!")
-                self.fetch_status()
-            return
-        DocumentsManager.set_scope(self.docid, new_scope)
-        tk.messagebox.showinfo("", "Set scope successfully!")
-        self.fetch_status()
