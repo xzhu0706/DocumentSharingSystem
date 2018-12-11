@@ -1,8 +1,6 @@
 #from PIL import ImageTk, Image
 from DocumentViewerPage import *
 import speech_recognition as sr
-import pandas as pd
-
 
 class DocumentEditorPage(DocumentViewerPage):
 

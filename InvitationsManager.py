@@ -21,6 +21,7 @@ def send_invitation(invitee_id, docid):
         'inviter_id': [DocumentsManager.get_doc_info(docid)['owner_id']],
         'invitee_id': [invitee_id],
         'doc_id': [docid],
+        'time': [DocumentsManager.create_time_object()],
         'accepted': [False]
     })
     with open(path_to_invitations_db, 'a') as invitations_db:
@@ -48,6 +49,7 @@ def accept_invitation(invitee_id, docid):
     index = get_invitation_index(invitee_id, docid)
     invitations_db.drop(index=index, inplace=True)
     invitations_db.to_csv(path_to_invitations_db, index=False)
+    DocumentsManager.add_contributor(invitee_id, docid)
 
 
 def reject_invitation(invitee_id, docid):
@@ -79,6 +81,16 @@ def is_invited(invitee_id, docid):
         return False
 
 
+def remove_invitations(docid):
+    '''This function removes all invitations of a doc from db,
+        should be called when doc is deleted or scope is changed'''
+    invitations_db = pd.read_csv(path_to_invitations_db)
+    invitations = invitations_db.loc[invitations_db['doc_id'] == docid]
+    if not invitations.empty:
+        index_list = invitations.index.tolist()
+        for index in index_list:
+            invitations_db.drop(index=index, inplace=True)
+        invitations_db.to_csv(path_to_invitations_db, index=False)
 
 
 def main():
@@ -86,8 +98,6 @@ def main():
     docid = 16
     userid = 4
 
-    print(is_rejected(userid, docid))
-    print(is_invited(userid, docid))
 
 
 

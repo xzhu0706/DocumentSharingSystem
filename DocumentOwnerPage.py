@@ -1,7 +1,4 @@
 from DocumentEditorPage import *
-import DocumentsManager
-import AccountsManager
-import InvitationsManager
 
 class DocumentOwnerPage(DocumentEditorPage):
 
@@ -48,6 +45,7 @@ class DocumentOwnerPage(DocumentEditorPage):
             if msg_box == 'yes':
                 DocumentsManager.set_scope(self.docid, new_scope)
                 DocumentsManager.remove_all_contributor(self.docid)
+                InvitationsManager.remove_invitations(self.docid)
                 tk.messagebox.showinfo("", "Set scope successfully!")
                 self.fetch_status()
             return

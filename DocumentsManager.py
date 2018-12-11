@@ -4,6 +4,7 @@ import pandas as pd
 import time
 import numpy as np
 import AccountsManager
+import InvitationsManager
 
 pd.set_option('display.expand_frame_repr', False)
 
@@ -201,9 +202,10 @@ def delete_doc(docid):
         locker_db = pd.read_csv(path_to_locker_db, index_col=0)
         locker_db.drop(docid, inplace=True)
         locker_db.to_csv(path_to_locker_db)
-    # delete from contributors db if scope was Shared
+    # delete from contributors db and invitations db if scope was Shared
     if get_scope(docid) == 'Shared':
         remove_all_contributor(docid)
+        InvitationsManager.remove_invitations(docid)
     # delete from warning list if necessary
     warning_list = pd.read_csv(path_to_warning_list_db)
     on_warning_list = warning_list.loc[warning_list['doc_id'] == docid]
@@ -219,7 +221,7 @@ def delete_doc(docid):
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
     docs_db.drop(docid, inplace=True)
     docs_db.to_csv(path_to_documents_db)
-    # TODO: maybe delete from complaints db and invitations db
+    # TODO: maybe delete from complaints db
 
 
 def create_new_doc(userid, scope, title):

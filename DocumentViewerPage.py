@@ -3,6 +3,7 @@ import pandas as pd
 #from PIL import ImageTk, Image
 import DocumentsManager
 import AccountsManager
+import InvitationsManager
 
 class DocumentViewerPage(tk.Frame):
 

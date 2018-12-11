@@ -1,6 +1,5 @@
 from Guest import *
 import tkinter as tk
-import DocumentsManager
 
 class OrdinaryUser(Guest):
 
@@ -17,7 +16,7 @@ class OrdinaryUser(Guest):
         # create_doc_button.config(height=10, width=10);
         process_complaints_button = tk.Button(self, text="Process Complaints")  # command=lambda:
         # TODO:NEED TO SHOW THE COMPLAINTS THE USER RECEIVED
-        manage_invite_button = tk.Button(self, text="Manage Invitations")  # command=lambda:NEED TO CHECK FROM BACKEND IF ANYONE INVITED
+        manage_invite_button = tk.Button(self, text="Manage Invitations", command=self.manage_invitations)
         # TODO: need to show the inivitations received
         logout_button = tk.Button(self, text="Log Out", fg="blue", command=lambda: controller.log_out())
 
@@ -115,6 +114,66 @@ class OrdinaryUser(Guest):
 
     def search_user(self, result):
         self.SearchResultBox(result)
+
+    def manage_invitations(self):
+        self.ManageInvitationsBox(self.userid)
+
+    class ManageInvitationsBox(tk.Toplevel):
+        # This class is a popup box that allows user to accept/reject invitations
+
+        def __init__(self, userid):
+            tk.Toplevel.__init__(self)
+
+            self.userid = userid
+            self.title("Manage Invitations")
+            self.invitations_received = InvitationsManager.get_invitations(userid)
+
+            self.invitations_section = ttk.Treeview(self, height=6, show=['headings'],
+                                                    columns=['inviter', 'title', 'time'])
+            self.invitations_section.heading('inviter', text='Inviter')
+            self.invitations_section.heading('title', text='Document Title')
+            self.invitations_section.heading('time', text='Received at')
+            self.invitations_section.column('inviter', minwidth=0, width=100)
+            self.invitations_section.column('title', minwidth=0, width=150)
+            self.invitations_section.column('time', minwidth=0, width=160)
+
+            vsb = ttk.Scrollbar(self, orient="vertical", command=self.invitations_section.yview)
+            self.invitations_section.configure(yscrollcommand=vsb.set)
+
+            accept_button = tk.Button(self, text="Accept", command=self.accept_invite)
+            reject_button = tk.Button(self, text="Reject", command=self.reject_invite)
+            back_button = tk.Button(self, text="Back", command=self.destroy)
+
+            self.invitations_section.grid(row=0)
+            vsb.grid(row=0, column=1, sticky='nse')
+            accept_button.grid(row=1)
+            reject_button.grid(row=2)
+            back_button.grid(row=3)
+
+            # filter our the invites that have been rejected
+            self.invitations_received = self.invitations_received.loc[self.invitations_received['rejected'] == False]
+            # populate invitations section
+            if not self.invitations_received.empty:
+                for index, row in self.invitations_received.iterrows():
+                    info_tuple = (
+                        AccountsManager.get_username(row['inviter_id']),
+                        DocumentsManager.get_doc_info(row['doc_id'])['title'],
+                        row['time']
+                    )
+                    self.invitations_section.insert('', tk.END, iid=row['doc_id'], values=info_tuple)
+
+
+        def accept_invite(self):
+            selected_invite_docid = int(self.invitations_section.selection()[0])
+            InvitationsManager.accept_invitation(self.userid, selected_invite_docid)
+            tk.messagebox.showinfo("", "Accepted invitation successfully. You can now contribute to the document!")
+            self.invitations_section.delete(selected_invite_docid)
+
+        def reject_invite(self):
+            selected_invite_docid = int(self.invitations_section.selection()[0])
+            InvitationsManager.reject_invitation(self.userid, selected_invite_docid)
+            tk.messagebox.showinfo("", "You have rejected the invitation successfully.")
+            self.invitations_section.delete(selected_invite_docid)
 
     class DialogBox(tk.Toplevel):
         # This class is a dialog box that asks user for title and scope of doc upon creating new doc
