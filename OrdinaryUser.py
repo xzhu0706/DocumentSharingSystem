@@ -23,7 +23,7 @@ class OrdinaryUser(Guest):
         search_field = tk.Entry(self)
 
         user_search_button = tk.Button(self, text="Search User", command=lambda: self.search_user(search_field.get()))
-        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_document(search_field.get()))
+        document_search_button = tk.Button(self, text="Search Document", command=lambda: self.search_doc(search_field.get()))
 
         # PLACING THE LABELS
         n = 150
@@ -56,7 +56,7 @@ class OrdinaryUser(Guest):
         self.refresh_doc_section(docs)
 
     def create_new_doc(self):
-        box = self.dialog_box()  # create the dialog box to ask for title and scope for creating doc
+        box = self.DialogBox()  # create the dialog box to ask for title and scope for creating doc
         self.wait_window(box)  # wait until dialog is closed (info is submitted)
         title = box.init_info['title']
         scope = box.init_info['scope']
@@ -80,16 +80,41 @@ class OrdinaryUser(Guest):
         else:
             tk.messagebox.showerror("", "Please select a document!")
 
+    def search_doc(self, document_result):
+        # this function returns a list of doc id that contains key words from search field
+        list_with_docid = []
+        index_list = []
+        document_db = DocumentsManager.get_all_docs()
+
+        document_title_list = list(document_db['title'].loc[document_db['owner_id'] == self.userid])
+        document_content_list = list(document_db['content'].loc[document_db['owner_id'] == self.userid])
+        document_id_list = list(document_db['doc_id'].loc[document_db['owner_id'] == self.userid])
+
+        counter = 0
+        for iz in range(0, len(document_title_list)):
+            # check the document that match keywords entered in the search bar
+            if str(document_result) in str(document_title_list[iz]):
+                index_list.append(iz)
+                counter += 1
+            elif str(document_result) in str(document_content_list[iz]):
+                index_list.append(iz)
+                counter += 1
+        for jz in index_list:
+            list_with_docid.append(document_id_list[jz])
+
+        # this is the case when there is no match which simply destroys the box
+        # then prints an error message box in the screen
+        # as counter is updated when a match is found it being 0 confirm no match
+        if counter == 0:
+            tk.messagebox.showerror("Error", "No Such Document found")
+
+        print(list_with_docid)
+        return list_with_docid
+
     def search_user(self, result):
-        user_box=self.display_user_box(result)
-        # TODO: can search by name or technical interest
+        self.SearchResultBox(result)
 
-    def search_document(self, result):
-        user_box=self.display_document_box(result)
-        # TODO: search own docs by partial keywords
-
-
-    class dialog_box(tk.Toplevel):
+    class DialogBox(tk.Toplevel):
         # This class is a dialog box that asks user for title and scope of doc upon creating new doc
 
         def __init__(self):
@@ -133,36 +158,40 @@ class OrdinaryUser(Guest):
                 self.destroy()
 
     # this class helps is invoked to display search results of user in a document page
-    class display_user_box(tk.Toplevel):
+    class SearchResultBox(tk.Toplevel):
 
-        def __init__(self,user_result):
+        def __init__(self, user_result):
             # this is passed as keyword in the text field of the search bar
             tk.Toplevel.__init__(self)
             self.user_result=user_result
             self.title("User Search Results")
 
-            #reading the file for userinfo database
-            user_db=pd.read_csv("database/UserInfos.csv")
+            # read the user info database
+            user_db = AccountsManager.get_all_users()
 
             # list that stores all the user names
-            user_list=list(user_db['username'])
-            # list that stores all the tehcnical interest for all user in the respective index of the user
-            technical_list=list(user_db['technical_interest'])
-            # empty list to store the index of usernames matched
-            index_list=[]
-            # check if any usernames matches the searched input
+            user_list = list(user_db['username'])
+            # list that stores all the technical interest for all user in the respective index of the user
+            technical_list = list(user_db['technical_interest'])
+            # empty list to store the index of username matched
+            index_list = []
+            # check if any username matches the searched input
 
             # make a list box
-            username_list=tk.Listbox(self,height=10)#,width=10)
+            username_list = tk.Listbox(self, height=10)#,width=10)
             # setting the title for the listbox
-            username_list.insert(tk.END,"Users")
-            # looping through the names of usernames
-            for names in user_list:
+            username_list.insert(tk.END, "Users")
+            # lopping through the names of usernames
+            for names in range(0,len(user_list)):
                 # check if text in search bar has anything from the name in the database
-                if self.user_result in names:
-                    username_list.insert(tk.END,names)
+                if self.user_result in user_list[names]:
+                    username_list.insert(tk.END, user_list[names])
                     # keeping track of the indexes added to add the corresponding technical interests
-                    index_list.append(user_list.index(names))
+                    index_list.append(names)
+                if self.user_result in technical_list[names]:
+                    username_list.insert(tk.END, user_list[names])
+                    # keeping track of the indexes added to add the corresponding technical interests
+                    index_list.append(names)
 
             # make a list box for technical interest
             technical_interest_list=tk.Listbox(self, height=10)
@@ -174,60 +203,17 @@ class OrdinaryUser(Guest):
                 technical_interest_list.insert(tk.END, technical_list[index])
 
             # cancel button to go back to the main page
-            cancel_button=tk.Button(self,text="Cancel",command=self.destroy)#,command=lambda:mylistbox.get(ACTIVE))
+            cancel_button=tk.Button(self, text="Cancel", command=self.destroy)
 
             # setting up the layout of the dialog box
-            username_list.grid(row=0,column=0)
-            technical_interest_list.grid(row=0,column=1)
-            cancel_button.grid(row=1,column=0)
+            username_list.grid(row=0, column=0)
+            technical_interest_list.grid(row=0, column=1)
+            cancel_button.grid(row=1, column=0)
 
             # this is the case when there is no match which simply destroys the box
-            # then prints an error messagebox in the screen
-            # as index_list is updated when a match is found its length being 0 confrims no match
-            if(len(index_list)==0):
+            # then prints an error message box in the screen
+            # as index_list is updated when a match is found its length being 0 confirm no match
+            if len(index_list) == 0:
                 self.destroy()
-                tk.messagebox.showerror("Error","No Such User found")
+                tk.messagebox.showerror("Error", "No Such User found")
 
-    # thie class pops the dialogue box for the documents
-    class display_document_box(tk.Toplevel):
-
-        def __init__(self,document_result):
-            tk.Toplevel.__init__(self)
-            # this is passed as keyword in the text field of the search bar
-            self.document_result=document_result
-            self.title("Document Search Results")
-
-            #reading the file for Document database
-            document_db=pd.read_csv("database/Documents.csv")
-
-            # list that stores all the user names
-            document_list=list(document_db['title'])
-
-
-            # make a list box
-            document_listbox=tk.Listbox(self,height=10)
-            # lopping through the document's title
-            counter=0
-            for documents in document_list:
-                # check the document that match keywords entered in the search bar
-                if self.document_result in documents:
-                    document_listbox.insert(tk.END,documents)
-                    counter=counter+1
-
-            # cancel button to go back to the main page
-            cancel_button=tk.Button(self,text="Cancel",command=self.destroy)
-            # open button to open th document
-            open_button=tk.Button(self,text="Open")#,command=self.destroy)#,command=lambda:mylistbox.get(ACTIVE))
-
-
-            # setting up the layout of the dialog box
-            document_listbox.grid(row=0,column=0)
-            cancel_button.grid(row=1,column=0)
-            open_button.grid(row=1,column=1)
-
-            # this is the case when there is no match which simply destroys the box
-            # then prints an error messagebox in the screen
-            # as counter is updated when a match is found it being 0 confrims no match
-            if(counter==0):
-                self.destroy()
-                tk.messagebox.showerror("Error","No Such Document found")
