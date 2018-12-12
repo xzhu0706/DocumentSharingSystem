@@ -1,7 +1,3 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import font
-from tkinter import messagebox
 from OrdinaryUser import *
 
 class SuperUser(OrdinaryUser):

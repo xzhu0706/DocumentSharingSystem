@@ -1,7 +1,6 @@
 # This module contains the functions needed to manage accounts by interacting with database
 
 import pandas as pd
-import DocumentsManager
 
 path_to_documents_db = "database/Documents.csv"
 path_to_user_infos_db = "database/UserInfos.csv"

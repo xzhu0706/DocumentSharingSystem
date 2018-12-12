@@ -1,4 +1,3 @@
-#from PIL import ImageTk, Image
 from DocumentViewerPage import *
 import speech_recognition as sr
 
