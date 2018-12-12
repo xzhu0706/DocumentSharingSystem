@@ -5,3 +5,4 @@ seq_id,doc_id,based_on_seq_id,editing_commands,modified_by,modified_at
 4-1,4,4-2,update 0 something;update 1 about;update 2 chemistry;delete 3;delete 4;delete 5;delete 6;,3,2018-12-12 00:15:34
 5-1,5,5-2,update 1 bitch;delete 2;delete 3;delete 4;delete 5;delete 6;,3,2018-12-12 00:22:47
 5-2,5,5-3,update 1 UNKhello;,3,2018-12-12 00:23:28
+6-1,6,6-2,update 7 bitch;delete 8;,1,2018-12-12 13:02:31

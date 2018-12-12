@@ -87,14 +87,15 @@ class Application(tk.Tk):
         self.__usertype = usertype
         print('user is logged in as: ' + username)
         # create page for user
-        if usertype == 'SuperUser':
+        if self.is_on_warning_list():
+            self.show_warning()
+            return
+        elif usertype == 'SuperUser':
             self.create_su_page()
         elif usertype == 'OrdinaryUser':
-            if self.is_on_warning_list():
-                self.show_warning()
-                return
-            else:
-                self.create_ou_page()
+            self.create_ou_page()
+        elif usertype == 'DeletedUser':
+            tk.messagebox.showerror("", 'Your account has been suspended.')
 
     def log_out(self):
         self.__username = ''

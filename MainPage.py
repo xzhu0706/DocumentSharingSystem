@@ -86,12 +86,9 @@ class MainPage(tk.Frame):
             user = AccountsManager.validate_user(username_input, password_input)
             if user:
                 # If password match (validates successfully), set user info into the system by calling the controller method
-                if user['usertype'] == 'DeletedUser':
-                    tk.messagebox.showerror("", 'Your account has been suspended.')
-                else:
-                    username = username_input
-                    userid = user['userid']
-                    usertype = user['usertype']
-                    self.controller.log_in(username, userid, usertype)
+                username = username_input
+                userid = user['userid']
+                usertype = user['usertype']
+                self.controller.log_in(username, userid, usertype)
             else:
                 tk.messagebox.showerror("Error", "Wrong password!")
