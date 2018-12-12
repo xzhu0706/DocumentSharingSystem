@@ -1,3 +1,7 @@
+import tkinter as tk
+from tkinter import *
+from tkinter import font
+from tkinter import messagebox
 from OrdinaryUser import *
 
 class SuperUser(OrdinaryUser):
@@ -6,7 +10,6 @@ class SuperUser(OrdinaryUser):
 
         super(SuperUser, self).__init__(parent, controller)
 
-        # TODO: Baivab: need to work on update membership
         update_membership_button = tk.Button(self, text="Manage Membership",command=lambda:self.manage_membership())
         taboo_words_button = tk.Button(self, text="Manage Taboo Words", command=lambda: self.manage_taboo_words())
 
