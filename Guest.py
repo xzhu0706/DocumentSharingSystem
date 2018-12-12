@@ -146,7 +146,6 @@ class Guest(tk.Frame):
                 with open('database/TabooWords.csv', 'a') as taboo_db:
                     df.to_csv(taboo_db, index=False, header=False)
             tk.messagebox.showinfo("", "Thanks for your suggestion!")
-                
+
             print("Information updated in the database")
             self.destroy()
-

@@ -81,11 +81,10 @@ class DocumentViewerPage(tk.Frame):
         content = self.content.get(1.0, tk.END)
         title = self.title.get(1.0, tk.END)
         title = title.strip()
+        # TODO: might need to adjust the path
         temp_file = open("/Users/chau/Downloads/"+title+".txt", "w")
         print(content, file=temp_file)
-        tk.messagebox.showinfo("Message","File successfully downloaded!")
-
-
+        tk.messagebox.showinfo("","File successfully downloaded!")
 
     def fetch_title_and_content(self):
         # delete old content and insert new content
@@ -117,7 +116,6 @@ class DocumentViewerPage(tk.Frame):
         )
 
     def fetch_old_versions(self):
-        # TODO: need to try with more example, currently works with docid = 37 (with editing commands in versions db)
         self.doc_versions = DocumentsManager.get_doc_old_versions(self.docid)
 
         if self.doc_info['current_seq_id'] != '-':
