@@ -144,9 +144,8 @@ class Guest(tk.Frame):
                 df = pd.DataFrame(data,columns=["word","approved"])
                 with open('database/TabooWords.csv', 'a') as taboo_db:
                     df.to_csv(taboo_db, index=False, header=False)
-                new_word_id=new_word_id+1
-            tk.messagebox.showinfo("", "Thanks for your suggestion!")
                 
+            tk.messagebox.showinfo("", "Thanks for your suggestion!")
+
             print("Information updated in the database")
             self.destroy()
-

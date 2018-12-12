@@ -93,10 +93,10 @@ class OrdinaryUser(Guest):
         counter = 0
         for iz in range(0, len(title_list)):
             # check the document that match keywords entered in the search bar
-            if str(document_result) in str(title_list[iz]):
+            if str(document_result).upper() in str(title_list[iz]).upper():
                 list_with_docid.append(docid_list[iz])
                 counter += 1
-            elif str(document_result) in str(content_list[iz]):
+            elif str(document_result).upper() in str(content_list[iz]).upper():
                 list_with_docid.append(docid_list[iz])
                 counter += 1
 
@@ -245,14 +245,15 @@ class OrdinaryUser(Guest):
             # lopping through the names of usernames
             for names in range(0,len(user_list)):
                 # check if text in search bar has anything from the name in the database
-                if self.user_result in user_list[names]:
-                    username_list.insert(tk.END, user_list[names])
-                    # keeping track of the indexes added to add the corresponding technical interests
-                    index_list.append(names)
-                if self.user_result in technical_list[names]:
-                    username_list.insert(tk.END, user_list[names])
-                    # keeping track of the indexes added to add the corresponding technical interests
-                    index_list.append(names)
+                if user_list[names] != "DeletedUser":
+                    if self.user_result.upper() in user_list[names].upper():
+                        username_list.insert(tk.END, user_list[names])
+                        # keeping track of the indexes added to add the corresponding technical interests
+                        index_list.append(names)
+                    elif self.user_result.upper() in technical_list[names].upper():
+                        username_list.insert(tk.END, user_list[names])
+                        # keeping track of the indexes added to add the corresponding technical interests
+                        index_list.append(names)
 
             # make a list box for technical interest
             technical_interest_list=tk.Listbox(self, height=10)
@@ -277,4 +278,3 @@ class OrdinaryUser(Guest):
             if len(index_list) == 0:
                 self.destroy()
                 tk.messagebox.showerror("Error", "No Such User found")
-
