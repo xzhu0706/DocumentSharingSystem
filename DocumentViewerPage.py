@@ -6,8 +6,8 @@ import AccountsManager
 import InvitationsManager
 import ComplaintsManager
 from tkinter import simpledialog
-import platform
 import getpass
+import os
 
 class DocumentViewerPage(tk.Frame):
 
@@ -80,13 +80,25 @@ class DocumentViewerPage(tk.Frame):
         self.refresh_content()
 
     def download_file(self):
-        os = platform.platform()
         content = self.content.get(1.0, tk.END)
         title = self.title.get(1.0, tk.END)
         title = title.strip()
         os_username = getpass.getuser()
-        temp_file = open("/users/"+os_username+"/downloads/" + title + ".txt", "w")
+        path = "/users/" + os_username + "/downloads/" + title
+        if os.path.isfile(path+".txt"):
+            for i in range(1, 9999):
+                new_path = path + " ({})".format(i)
+                if os.path.isfile(new_path+".txt"):
+                    print("there is the file")
+                    continue
+                else:
+                    temp_file = open(new_path+".txt", "w")
+                    break
+        else:
+            temp_file = open(path+".txt", "w")
+
         print(content, file=temp_file)
+        temp_file.close()
 
         tk.messagebox.showinfo("","File successfully downloaded!")
 
