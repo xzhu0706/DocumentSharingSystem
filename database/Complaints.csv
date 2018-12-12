@@ -1,4 +1,4 @@
 complaint_id,complainer_id,receiver_id,complaint_type,complainee_id,seq_id,content,processed
-1,2,1,to_owner,2,16-2,dont like it,False
-2,3,2,to_owner,2,27-1,too bad,False
-4,3,5,to_su,2,27-2,so baaad,False
+1,4,2,to_owner,2,1-1,I don't like this,True
+2,4,1,to_su,6,3-1,This document is uesless,False
+3,4,5,to_su,6,3-1,This document is uesless,False

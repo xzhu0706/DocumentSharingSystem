@@ -1,100 +1,24 @@
 doc_id,owner_id,current_seq_id,scope,is_locked,views_count,modified_by,modified_at,title,content
-15,2,-,Private,False,12,2,2018-12-07 21:45:45,vohiyo,
-16,1,16-3,Shared,True,46,2,2018-12-11 14:02:20,ohiyo,"hello
-my
-name
-is
-jana
-jajaja"
-18,2,-,Private,False,1,2,2018-12-07 22:14:14,yay, 
-21,2,-,Private,True,1,2,2018-12-07 22:42:51,heilo, 
-22,2,22-3,Private,True,5,2,2018-12-11 01:02:27,ya,"
-shit"
-26,2,26-7,Shared,True,27,2,2018-12-11 09:53:02,yay,"jala
-naya
-saronara
-I
-am
+1,2,1-3,Shared,False,10,3,2018-12-11 21:03:39,Hello World,"hello
+world
 trying
 to
-edit
+use
 a
-shared
-document
-again
-ya"
-27,2,27-2,Restricted,False,31,3,2018-12-11 15:15:07,hala,"sala
-ja
-ya"
-28,2,28-3,Private,False,1,2,2018-12-08 00:02:25,sa,"fsd
-fds
-fds
-sdf
-jia
-jie"
-37,4,37-3,Public,False,77,4,2018-12-09 03:14:24,alpaca,"once
-upon
-a
-time
-there
+taboo
+word
+fixed
+it
+this
 is
-an
-alpaca
-hello
-world
-jj"
-39,3,39-2,Private,False,2,3,2018-12-09 01:13:11,yay,"yas
-ya"
-41,4,41-2,Public,False,26,4,2018-12-08 18:14:22,ya ya,"jana
-ha
-ha
-ya"
-42,2,42-5,Public,True,5,2,2018-12-11 01:11:14,hi yo,"hi
-yo
-ja"
-43,3,43-3,Shared,True,13,2,2018-12-11 14:03:46,ba ba,"ya
-yayya
-"
-44,3,44-3,Restricted,True,9,3,2018-12-09 20:03:03,ya,"hello
-world
-ya
-salu"
-45,3,45-2,Restricted,True,14,3,2018-12-10 15:05:56,yay,"ja
-na
-fdg
-fdg"
-48,1,48-1,Private,True,0,1,2018-12-09 19:36:07,zsj,"ajd
-sd"
-49,1,49-2,Shared,True,7,1,2018-12-10 20:53:11,jana,"ja 
-na
-ya
-"
-53,1,53-1,Private,True,0,1,2018-12-09 19:46:49,ja na,"sa
-la
-ha
-sa
-ma
-"
-54,1,54-1,Private,True,0,1,2018-12-09 19:48:44,ja na,"dsf
-sdf
-sdf
-"
-55,1,55-2,Public,True,6,1,2018-12-09 19:53:42,yaas,"ja
-na
-ba
-sa
-shi
-ni
-ma
-sai"
-56,1,56-3,Private,True,6,1,2018-12-09 19:55:54,sa,"j
-a
-s
-d
-f
-g"
-57,3,57-1,Restricted,True,10,3,2018-12-09 20:15:18,ja na,"haa
-fdg"
-58,1,58-1,Private,False,7,1,2018-12-10 19:54:10,ja,"ohiyo
-sa"
-59,4,-,Private,False,2,4,2018-12-10 20:24:29,jaja yaya baba, 
+our
+first
+document"
+2,5,2-2,Public,True,1,5,2018-12-11 21:10:34,Hi All,"welcome
+guest
+this
+is
+our
+first
+public
+document"

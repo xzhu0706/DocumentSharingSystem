@@ -51,7 +51,7 @@ class DocumentViewerPage(tk.Frame):
         self.doc_versions_list = []
         self.versions_drop_down = tk.OptionMenu(self, self.version_var, None)
 
-        complain_button = tk.Button(self, text="Complain", command=self.complain_doc)
+        complain_button = tk.Button(self, text="Complain", command=lambda: controller.show_warning() if controller.is_warned else self.complain_doc)
         back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())
         download_button = tk.Button(self, text="Download", command=self.download_file)
 

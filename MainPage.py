@@ -33,12 +33,12 @@ class MainPage(tk.Frame):
         button_login = tk.Button(self, text="Log In",command=lambda: self.log_in(entry_name.get(),
                                                                                 entry_password.get()))
         button_guest = tk.Button(self, text="Guest User",command=lambda: controller.log_in_as_guest())
-        #**********************
-        #TODO: Need to work on this
-        #**********************
-        self.keep_login_var = tk.IntVar()
-        checkbox_keep_login = tk.Checkbutton(self, text="Keep me logged in",
-                                             variable=self.keep_login_var, fg="black")
+        # #**********************
+        # #TODO: Need to work on this
+        # #**********************
+        # self.keep_login_var = tk.IntVar()
+        # checkbox_keep_login = tk.Checkbutton(self, text="Keep me logged in",
+        #                                      variable=self.keep_login_var, fg="black")
 
         
         #CO-ORDINATES
@@ -61,7 +61,7 @@ class MainPage(tk.Frame):
         button_guest.place(x=n+230,y=m*7)
         
         ##PLACING THE CHECKBOX
-        checkbox_keep_login.place(x=n+100,y=m*6)
+        # checkbox_keep_login.place(x=n+100,y=m*6)
 
 
     # This function gets called when "log in" button is clicked.

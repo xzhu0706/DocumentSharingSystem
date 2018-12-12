@@ -25,10 +25,6 @@ class DocumentEditorPage(DocumentViewerPage):
         logout_button.place(x=n + 380, y=m - 20)
         speech_recognition_button.place(x=n - 120, y=m * 10 + 20)
 
-        # # Check taboo words in title if document was just created
-        # if self.doc_info['current_seq_id'] == '-':
-        #     self.update_check()
-
     def speech_recognition(self):
         r = sr.Recognizer()
         print('start speech')

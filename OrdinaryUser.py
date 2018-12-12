@@ -175,22 +175,7 @@ class OrdinaryUser(Guest):
             # populate complaints and content section
             self.complaints_received = ComplaintsManager.get_complaints_received(userid)
             self.unprocessed = ComplaintsManager.get_unprocessed_complaints(userid)
-            if not self.complaints_received.empty:
-                for complaint_id, row in self.complaints_received.iterrows():
-                    if row['complainer_id'] == 0:
-                        complainer_name = 'Guest'
-                    else:
-                        complainer_name = AccountsManager.get_username(row['complainer_id']),
-
-                    info_tuple = (
-                        complaint_id,
-                        complainer_name,
-                        AccountsManager.get_username(row['complainee_id']),
-                        DocumentsManager.get_doc_info(int(row['seq_id'].split('-')[0])),
-                        int(row['seq_id'].split('-')[1]),
-                        row['processed']
-                    )
-                    self.complaints_section.insert('', tk.END, iid=complaint_id, values=info_tuple)
+            self.show_complaints(self.complaints_received)
 
         def on_select_complaint(self, event):
             selected_complaint = int(self.complaints_section.identify_row(event.y))
@@ -226,7 +211,7 @@ class OrdinaryUser(Guest):
                         complaint_id,
                         complainer_name,
                         AccountsManager.get_username(row['complainee_id']),
-                        DocumentsManager.get_doc_info(int(row['seq_id'].split('-')[0])),
+                        DocumentsManager.get_doc_info(int(row['seq_id'].split('-')[0]))['title'],
                         int(row['seq_id'].split('-')[1]),
                         row['processed']
                     )
@@ -238,7 +223,7 @@ class OrdinaryUser(Guest):
             self.show_complaints(self.complaints_received)
 
         def show_unprocessed(self):
-            self.complaints_received = ComplaintsManager.get_unprocessed_complaints(self.userid)
+            self.unprocessed = ComplaintsManager.get_unprocessed_complaints(self.userid)
             self.show_complaints(self.unprocessed)
 
         def delete_complaint(self):

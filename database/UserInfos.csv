@@ -4,3 +4,5 @@ id,usertype,username,password,technical_interest
 3,OrdinaryUser,chau,chau,ios
 4,OrdinaryUser,alpaca,llama,software engineering
 5,SuperUser,super2,super2,web
+6,OrdinaryUser,Baivab,abcd,AI
+7,DeletedUser,alpaka,llama,web

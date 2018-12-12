@@ -229,7 +229,7 @@ def delete_doc(docid):
 def create_new_doc(userid, scope, title):
     '''This function add new row to documents database and return new_doc_id'''
     docs_db = pd.read_csv(path_to_documents_db, index_col=0)
-    new_docid = docs_db.tail(1).index.values[0] + 1
+    new_docid = len(docs_db) + 1
     # Add new doc to db (doc_id and owner_id)
     # initial seq_id is just a dash '-' (meaning no content in it)
     # initial content is just a blank space
@@ -281,7 +281,6 @@ def update_doc(userid, docid, updated_content):
 
 
 def store_old_version(old_version, based_on_seq_id, based_on_content):
-    # TODO: NOT FINISHED!!!!!!!!!!!!
     df = pd.DataFrame({
         'seq_id': [old_version['current_seq_id']],
         'doc_id': [based_on_seq_id.split('-')[0]],
