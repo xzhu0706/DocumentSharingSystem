@@ -53,6 +53,7 @@ class DocumentViewerPage(tk.Frame):
 
         complain_button = tk.Button(self, text="Complain", command=self.complain_doc)
         back_button = tk.Button(self, text="Back", command=lambda: controller.show_warning() if controller.is_warned else self.destroy())
+        download_button = tk.Button(self, text="Download", command=self.download_file)
 
         n = 150
         m = 50
@@ -65,6 +66,7 @@ class DocumentViewerPage(tk.Frame):
         self.content.place(x=n - 120, y=m + 90)
         self.versions_drop_down.place(x=n + 325, y=m + 20)
 
+        download_button.place(x=n + 325, y=m * 9)
         complain_button.place(x=n + 325, y=m * 7)
         back_button.place(x=n + 325, y=m * 8)
         lock_status_label.place(x=n + 70, y=m * 10 + 20)
@@ -74,6 +76,16 @@ class DocumentViewerPage(tk.Frame):
 
         # display doc info
         self.refresh_content()
+
+    def download_file(self):
+        content = self.content.get(1.0, tk.END)
+        title = self.title.get(1.0, tk.END)
+        title = title.strip()
+        temp_file = open("/Users/chau/Downloads/"+title+".txt", "w")
+        print(content, file=temp_file)
+        tk.messagebox.showinfo("Message","File successfully downloaded!")
+
+
 
     def fetch_title_and_content(self):
         # delete old content and insert new content
