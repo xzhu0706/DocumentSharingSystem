@@ -6,3 +6,4 @@ id,usertype,username,password,technical_interest
 5,SuperUser,super2,super2,web
 6,OrdinaryUser,Baivab,abcd,AI
 7,DeletedUser,alpaka,llama,web
+8,OrdinaryUser,jie,wei,machine learning
